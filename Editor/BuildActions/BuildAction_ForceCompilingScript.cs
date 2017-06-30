@@ -1,4 +1,6 @@
+using System.Linq;
 using UnityEditor;
+using UnityEngine;
 
 namespace UniGameTools.BuildMechine.BuildActions
 {
@@ -6,19 +8,27 @@ namespace UniGameTools.BuildMechine.BuildActions
     {
         public override void Build()
         {
-            var cMonoScript = MonoImporter.GetAllRuntimeMonoScripts()[0];
+            MonoScript cMonoScript = null;
 
             foreach (var script in MonoImporter.GetAllRuntimeMonoScripts())
             {
                 var assetPath = AssetDatabase.GetAssetPath(script);
-                if (assetPath.StartsWith("Assets/_Scripts"))
+
+                if (assetPath.StartsWith("Assets"))
                 {
+                    Debug.Log("Reimport : " + assetPath);
                     cMonoScript = script;
                     break;
                 }
             }
-
-            AssetDatabase.ImportAsset(AssetDatabase.GetAssetPath(cMonoScript));
+            if (cMonoScript != null)
+            {
+                AssetDatabase.ImportAsset(AssetDatabase.GetAssetPath(cMonoScript));
+            }
+            else
+            {
+                Debug.LogError("No found any script to reimport");
+            }
 
             this.State = BuildState.Succeed;
         }
