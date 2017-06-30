@@ -20,13 +20,10 @@ namespace UniGameTools.BuildMechine.BuildActions
         {
 #if UNITY_5_6_OR_NEWER
             PlayerSettings.applicationIdentifier = BundleID;
-
-
 #else
-        PlayerSettings.bundleIdentifier = BundleID;
-        PlayerSettings.iPhoneBundleIdentifier = BundleID;
+            PlayerSettings.bundleIdentifier = BundleID;
+            PlayerSettings.iPhoneBundleIdentifier = BundleID;
 #endif
-
             State = BuildState.Succeed;
         }
 

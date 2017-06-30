@@ -6,29 +6,13 @@ namespace UniGameTools.BuildMechine.BuildActions
     {
         public override void Build()
         {
-            //        var listScene = new List<string>();
-            //        for (var i = 0; i < EditorBuildSettings.scenes.Length; i++)
-            //        {
-            //            var s = EditorBuildSettings.scenes[i];
-            //            if (s.enabled)
-            //            {
-            //                listScene.Add(s.path);
-            //            }
-            //        }
-
-            //        NimaHelper.JsonLog("打包的场景", listScene);
-
-            //        var Asset = AssetFactory.GetAssets<AkiBuildSetting>();
-
-            //        if (Asset.BuildTarget == BuildTarget.Android)
-            //        {
             //---------------BuildNumber.txt记录-----------------//
             BuildHelper.AddBuildNum();
             var buildNumber = BuildHelper.GetBuildNum();
 
 
             //            //---------------获得apk名字-----------------//
-            Debug.Log("当前Build版本：" + buildNumber.ToString());
+            Debug.Log("当前Build版本：" + buildNumber);
             //            Debug.Log("工作目录：" + Directory.GetCurrentDirectory());
             //            var s = PackageSetting.Load()[PackageSetting.BuildSettingKey_SdkScenePostfix];
             //            var newFileName = string.Format("{0}_v{1}_build{2}_{4}_{3}.apk",

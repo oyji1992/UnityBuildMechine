@@ -18,10 +18,10 @@ namespace UniGameTools.BuildMechine.BuildActions
         public override void Build()
         {
             var listScene = new List<string>();
-            for(var i = 0; i < EditorBuildSettings.scenes.Length; i++)
+            for (var i = 0; i < EditorBuildSettings.scenes.Length; i++)
             {
                 var s = EditorBuildSettings.scenes[i];
-                if(s.enabled)
+                if (s.enabled)
                 {
                     listScene.Add(s.path);
                     Debug.Log(s.path);
@@ -33,12 +33,9 @@ namespace UniGameTools.BuildMechine.BuildActions
 
             var path = string.Format("AutoBuild_{0}/{1}/game.exe", Path.GetFileName(dir), newFileName);
 
-
             EditorPrefs.SetString("BuildMechine.ProjectPath", Path.Combine(dir, path));
 
-            var res = BuildPipeline.BuildPlayer(listScene.ToArray(),
-                                                path, BuildTarget.StandaloneWindows64,
-                                                BuildOptions.None);
+            var res = BuildPipeline.BuildPlayer(listScene.ToArray(), path, BuildTarget.StandaloneWindows64, BuildOptions.None);
 
 
             Debug.LogFormat("打包至 {0} 结果 {1}", path, res);

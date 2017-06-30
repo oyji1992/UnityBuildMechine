@@ -22,11 +22,6 @@ namespace UniGameTools.BuildMechine.BuildActions
 
             CopyFolder(src, des);
             this.State = BuildState.Succeed;
-
-            //ThreadPool.QueueUserWorkItem(target =>
-            //{
-
-            //});
         }
 
 
