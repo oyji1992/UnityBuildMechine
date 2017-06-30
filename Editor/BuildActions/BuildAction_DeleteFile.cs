@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using UnityEngine;
 
-namespace GameEditor
+namespace UniGameTools.BuildMechine.BuildActions
 {
     public class BuildAction_DeleteFile : BuildAction
     {

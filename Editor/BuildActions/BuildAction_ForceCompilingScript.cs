@@ -1,28 +1,31 @@
 using UnityEditor;
 
-public class BuildAction_ForceCompilingScript : BuildAction
+namespace UniGameTools.BuildMechine.BuildActions
 {
-    public override void Build()
+    public class BuildAction_ForceCompilingScript : BuildAction
     {
-        var cMonoScript = MonoImporter.GetAllRuntimeMonoScripts()[0];
-
-        foreach (var script in MonoImporter.GetAllRuntimeMonoScripts())
+        public override void Build()
         {
-            var assetPath = AssetDatabase.GetAssetPath(script);
-            if (assetPath.StartsWith("Assets/_Scripts"))
+            var cMonoScript = MonoImporter.GetAllRuntimeMonoScripts()[0];
+
+            foreach (var script in MonoImporter.GetAllRuntimeMonoScripts())
             {
-                cMonoScript = script;
-                break;
+                var assetPath = AssetDatabase.GetAssetPath(script);
+                if (assetPath.StartsWith("Assets/_Scripts"))
+                {
+                    cMonoScript = script;
+                    break;
+                }
             }
+
+            AssetDatabase.ImportAsset(AssetDatabase.GetAssetPath(cMonoScript));
+
+            this.State = BuildState.Succeed;
         }
 
-        AssetDatabase.ImportAsset(AssetDatabase.GetAssetPath(cMonoScript));
-
-        this.State = BuildState.Succeed;
-    }
-
-    public override BuildProgress GetProgress()
-    {
-        return null;
+        public override BuildProgress GetProgress()
+        {
+            return null;
+        }
     }
 }

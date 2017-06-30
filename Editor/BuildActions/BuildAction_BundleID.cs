@@ -1,23 +1,25 @@
 ﻿using UnityEditor;
 
-public class BuildAction_BundleID : BuildAction
+namespace UniGameTools.BuildMechine.BuildActions
 {
-    public string BundleID;
-
-    public BuildAction_BundleID()
+    public class BuildAction_BundleID : BuildAction
     {
+        public string BundleID;
 
-    }
+        public BuildAction_BundleID()
+        {
 
-    public BuildAction_BundleID(string id)
-    {
-        this.BundleID = id;
-    }
+        }
 
-    public override void Build()
-    {
+        public BuildAction_BundleID(string id)
+        {
+            this.BundleID = id;
+        }
+
+        public override void Build()
+        {
 #if UNITY_5_6_OR_NEWER
-        PlayerSettings.applicationIdentifier = BundleID;
+            PlayerSettings.applicationIdentifier = BundleID;
 
 
 #else
@@ -25,11 +27,12 @@ public class BuildAction_BundleID : BuildAction
         PlayerSettings.iPhoneBundleIdentifier = BundleID;
 #endif
 
-        State = BuildState.Succeed;
-    }
+            State = BuildState.Succeed;
+        }
 
-    public override BuildProgress GetProgress()
-    {
-        return null;
+        public override BuildProgress GetProgress()
+        {
+            return null;
+        }
     }
 }

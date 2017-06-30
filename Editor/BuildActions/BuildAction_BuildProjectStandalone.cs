@@ -4,7 +4,7 @@ using System.IO;
 using UnityEditor;
 using UnityEngine;
 
-namespace GameEditor
+namespace UniGameTools.BuildMechine.BuildActions
 {
     public class BuildProjectStandalone : BuildAction
     {

@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using UnityEngine;
 
-namespace GameEditor
+namespace UniGameTools.BuildMechine.BuildActions
 {
     public class BuildAction_CopyFile : BuildAction
     {
@@ -30,7 +30,7 @@ namespace GameEditor
         }
 
 
-        public void CopyFolder(string src, string des)
+        private void CopyFolder(string src, string des)
         {
             Directory.CreateDirectory(des);
 
@@ -55,7 +55,9 @@ namespace GameEditor
             else
             {
                 if (!File.Exists(src))
+                {
                     return;
+                }
 
                 File.Copy(src, des, true);
             }

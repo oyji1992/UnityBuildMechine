@@ -1,4 +1,6 @@
 ﻿using UnityEditor;
+using UniGameTools.BuildMechine;
+using UniGameTools.BuildMechine.BuildActions;
 
 public class BuildMechineExample
 {

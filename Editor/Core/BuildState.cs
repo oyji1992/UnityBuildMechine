@@ -1,7 +1,10 @@
-﻿public enum BuildState
+﻿namespace UniGameTools.BuildMechine
 {
-    None,
-    Building,
-    Succeed,
-    Fail
+    public enum BuildState
+    {
+        None,
+        Building,
+        Succeed,
+        Fail
+    }
 }

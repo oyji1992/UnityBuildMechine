@@ -1,16 +1,19 @@
 using UnityEditor;
 
-public class BuildAction_SaveAndFresh : BuildAction
+namespace UniGameTools.BuildMechine.BuildActions
 {
-    public override void Build()
+    public class BuildAction_SaveAndFresh : BuildAction
     {
-        AssetDatabase.SaveAssets();
-        AssetDatabase.Refresh();
-        this.State = BuildState.Succeed;
-    }
+        public override void Build()
+        {
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+            this.State = BuildState.Succeed;
+        }
 
-    public override BuildProgress GetProgress()
-    {
-        return null;
+        public override BuildProgress GetProgress()
+        {
+            return null;
+        }
     }
 }

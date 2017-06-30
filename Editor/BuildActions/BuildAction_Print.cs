@@ -1,22 +1,25 @@
 using UnityEngine;
 
-public class BuildAction_Print : BuildAction
+namespace UniGameTools.BuildMechine.BuildActions
 {
-    public string Msg;
-
-    public BuildAction_Print(string msg)
+    public class BuildAction_Print : BuildAction
     {
-        this.Msg = msg;
-    }
+        public string Msg;
 
-    public override void Build()
-    {
-        Debug.Log(Msg);
-        this.State = BuildState.Succeed;
-    }
+        public BuildAction_Print(string msg)
+        {
+            this.Msg = msg;
+        }
 
-    public override BuildProgress GetProgress()
-    {
-        return null;
+        public override void Build()
+        {
+            Debug.Log(Msg);
+            this.State = BuildState.Succeed;
+        }
+
+        public override BuildProgress GetProgress()
+        {
+            return null;
+        }
     }
 }
