@@ -1,3 +1,4 @@
+using System.IO;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
@@ -27,7 +28,7 @@ namespace UniGameTools.BuildMechine.BuildActions
             }
             else
             {
-                Debug.LogError("No found any script to reimport");
+                Debug.LogError("No found any runtime script to reimport");
             }
 
             this.State = BuildState.Succeed;

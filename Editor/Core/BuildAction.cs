@@ -16,7 +16,7 @@ namespace UniGameTools.BuildMechine
     {
         private BuildState _state;
 
-        public List<object> Infos = new List<object>();
+        public List<Info> Infos = new List<Info>();
 
         public BuildState State
         {
@@ -35,7 +35,7 @@ namespace UniGameTools.BuildMechine
             }
         }
 
-        public virtual void Update(){}
+        public virtual void Update() { }
 
         public abstract void Build();
 

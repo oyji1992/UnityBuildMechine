@@ -10,8 +10,9 @@ namespace UniGameTools.BuildMechine
     {
         public static BuildMechine Instance;
 
-        public List<object> Info = new List<object>();
+        public List<Info> Infos = new List<Info>();
 
+        [NonSerialized]
         public List<BuildAction> Actions = new List<BuildAction>();
 
         public int CurrentActionIndex;
@@ -26,33 +27,49 @@ namespace UniGameTools.BuildMechine
         {
             get
             {
-
-                var s = EditorPrefs.GetString("BuildMechine.JsonInstance", "");
-                if (string.IsNullOrEmpty(s))
-                {
-                    return null;
-                }
-                Debug.Log("Load Json Instance");
-
                 //            JsonSerializerSettings setting = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto };
                 //            return JsonConvert.DeserializeObject<BuildMechine>(s, setting);
 
-                return JsonUtility.FromJson<BuildMechine>(s);
+                var s = EditorPrefs.GetString("BuildMechine.JsonInstance", "");
+                if (string.IsNullOrEmpty(s)) return null;
+
+                Debug.Log("Load Json Instance");
+                var mechine = JsonUtility.FromJson<BuildMechine>(s);
+
+                var s2 = EditorPrefs.GetString("BuildMechine.Actions", "");
+                if (string.IsNullOrEmpty(s2))
+                {
+                    return null;
+                }
+
+                var collection = JsonUtility.FromJson<WarperCollection>(s2);
+                mechine.Actions = collection.Warpers.Select(r => r.GetAction()).ToList();
+                
+                return mechine;
             }
             set
             {
                 if (value == null)
                 {
                     EditorPrefs.DeleteKey("BuildMechine.JsonInstance");
+                    EditorPrefs.DeleteKey("BuildMechine.Actions");
                 }
                 else
                 {
                     //                JsonSerializerSettings setting = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto };
                     //                var json = JsonConvert.SerializeObject(value, Formatting.Indented, setting);
                     //                EditorPrefs.SetString("BuildMechine.JsonInstance", json);
+
                     var json = JsonUtility.ToJson(value);
                     EditorPrefs.SetString("BuildMechine.JsonInstance", json);
 
+                    var warpers = value.Actions.Select(r => new Warper().SetAction(r)).ToList();    
+                    var collection = new WarperCollection(){Warpers = warpers};
+
+                    var warpersJson = JsonUtility.ToJson(collection);
+                    //                Debug.LogError("actions : " + warpersJson);
+
+                    EditorPrefs.SetString("BuildMechine.Actions", warpersJson);
                     //                Debug.Log("Save : ");
                     //                Debug.Log(serializeObject);
                 }
@@ -89,45 +106,45 @@ namespace UniGameTools.BuildMechine
                 switch (CurrentBuildAction.State)
                 {
                     case BuildState.None:
-                    {
-                        Debug.Log("Start Action: " + CurrentBuildAction.GetType());
+                        {
+                            Debug.Log("Start Action: " + CurrentBuildAction.GetType());
 
-                        CurrentBuildAction.State = BuildState.Building;
-                        CurrentBuildAction.Build();
-                    }
+                            CurrentBuildAction.State = BuildState.Building;
+                            CurrentBuildAction.Build();
+                        }
                         break;
                     case BuildState.Building:
-                    {
-                        CurrentBuildAction.Update();
-                    }
+                        {
+                            CurrentBuildAction.Update();
+                        }
                         break;
                     case BuildState.Succeed:
-                    {
-                        Info.AddRange(CurrentBuildAction.Infos);
-
-                        CurrentActionIndex++;
-
-                        if (CurrentBuildAction != null)
                         {
-                            Debug.Log("Start Next Step : " + CurrentBuildAction.GetType());
-                            CurrentBuildAction.State = BuildState.None;
-                            JsonInstance = this;
-                        }
-                        else
-                        {
-                            BuildFinished();
-                        }
+                            Infos.AddRange(CurrentBuildAction.Infos);
+
+                            CurrentActionIndex++;
+
+                            if (CurrentBuildAction != null)
+                            {
+                                Debug.Log("Start Next Step : " + CurrentBuildAction.GetType());
+                                CurrentBuildAction.State = BuildState.None;
+                                JsonInstance = this;
+                            }
+                            else
+                            {
+                                BuildFinished();
+                            }
 
 
-                    }
+                        }
                         break;
                     case BuildState.Fail:
-                    {
-                        Info.AddRange(CurrentBuildAction.Infos);
-                        Debug.LogError("打包结束。打包失败了");
-                        CurrentActionIndex = int.MaxValue;
-                        BuildFinished();
-                    }
+                        {
+                            Infos.AddRange(CurrentBuildAction.Infos);
+                            Debug.LogError("打包结束。打包失败了");
+                            CurrentActionIndex = int.MaxValue;
+                            BuildFinished();
+                        }
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();
@@ -138,7 +155,7 @@ namespace UniGameTools.BuildMechine
         private void BuildFinished()
         {
             // Log All Errors;
-            foreach (var error in Info)
+            foreach (var error in Infos)
             {
                 Debug.LogError(error);
             }
