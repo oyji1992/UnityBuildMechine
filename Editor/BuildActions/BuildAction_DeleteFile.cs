@@ -12,7 +12,7 @@ namespace UniGameTools.BuildMechine.BuildActions
             FilePath = filePath;
         }
 
-        public override void Build()
+        public override void OnEnter()
         {
             var dir = Application.dataPath.Replace("/Assets", "");
             var path = Path.Combine(dir, FilePath);
@@ -26,7 +26,7 @@ namespace UniGameTools.BuildMechine.BuildActions
                 File.Delete(Path.Combine(dir, FilePath));
             }
 
-            this.State = BuildState.Succeed;
+            this.State = BuildState.Success;
         }
 
         public override BuildProgress GetProgress()

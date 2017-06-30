@@ -12,28 +12,28 @@ namespace UniGameTools.BuildMechine.BuildActions
             Actions = actions;
         }
 
-        public override void Build()
+        public override void OnEnter()
         {
             CurrentIndex = 0;
 
-            Actions[CurrentIndex].Build();
+            Actions[CurrentIndex].OnEnter();
             Debug.Log("Do " + Actions[CurrentIndex]);
         }
 
-        public override void Update()
+        public override void OnUpdate()
         {
-            if (Actions[CurrentIndex].State == BuildState.Succeed)
+            if (Actions[CurrentIndex].State == BuildState.Success)
             {
                 CurrentIndex++;
 
                 if (CurrentIndex < Actions.Length)
                 {
-                    Actions[CurrentIndex].Build();
+                    Actions[CurrentIndex].OnEnter();
                     Debug.Log("Do " + Actions[CurrentIndex]);
                 }
                 else
                 {
-                    State = BuildState.Succeed;
+                    State = BuildState.Success;
                 }
             }
         }

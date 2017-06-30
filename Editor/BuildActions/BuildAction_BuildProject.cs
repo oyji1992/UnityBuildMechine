@@ -4,7 +4,7 @@ namespace UniGameTools.BuildMechine.BuildActions
 {
     public class BuildAction_BuildProject : BuildAction
     {
-        public override void Build()
+        public override void OnEnter()
         {
             //---------------BuildNumber.txt记录-----------------//
             BuildHelper.AddBuildNum();
@@ -47,7 +47,7 @@ namespace UniGameTools.BuildMechine.BuildActions
             //            Debug.Log("暂不支持打包该平台。请手动打包。 " + Asset.BuildTarget);
             //        }
 
-            this.State = BuildState.Succeed;
+            this.State = BuildState.Success;
         }
 
         public override BuildProgress GetProgress()

@@ -109,16 +109,16 @@ namespace UniGameTools.BuildMechine
                         {
                             Debug.Log("Start Action: " + CurrentBuildAction.GetType());
 
-                            CurrentBuildAction.State = BuildState.Building;
-                            CurrentBuildAction.Build();
+                            CurrentBuildAction.State = BuildState.InProgress;
+                            CurrentBuildAction.OnEnter();
                         }
                         break;
-                    case BuildState.Building:
+                    case BuildState.InProgress:
                         {
-                            CurrentBuildAction.Update();
+                            CurrentBuildAction.OnUpdate();
                         }
                         break;
-                    case BuildState.Succeed:
+                    case BuildState.Success:
                         {
                             Infos.AddRange(CurrentBuildAction.Infos);
 
@@ -138,7 +138,7 @@ namespace UniGameTools.BuildMechine
 
                         }
                         break;
-                    case BuildState.Fail:
+                    case BuildState.Failure:
                         {
                             Infos.AddRange(CurrentBuildAction.Infos);
                             Debug.LogError("打包结束。打包失败了");

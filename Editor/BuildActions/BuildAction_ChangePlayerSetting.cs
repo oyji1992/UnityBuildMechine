@@ -7,7 +7,7 @@ namespace UniGameTools.BuildMechine.BuildActions
     {
         //    private PackageSetting _packSetting;
 
-        public override void Build()
+        public override void OnEnter()
         {
             Debug.Log("加载PackageSetting文件");
             //        _packSetting = PackageSettingUtil.LoadFile();
@@ -76,7 +76,7 @@ namespace UniGameTools.BuildMechine.BuildActions
             AssetDatabase.Refresh();
             Debug.Log("更改PlayerSettings成功");
 
-            State = BuildState.Succeed;
+            State = BuildState.Success;
         }
 
         BuildTarget SwithBuildTarget(string target)

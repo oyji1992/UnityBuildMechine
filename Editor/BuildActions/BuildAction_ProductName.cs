@@ -16,10 +16,10 @@ namespace UniGameTools.BuildMechine.BuildActions
             this.ProductName = productName;
         }
 
-        public override void Build()
+        public override void OnEnter()
         {
             PlayerSettings.productName = ProductName;
-            State = BuildState.Succeed;
+            State = BuildState.Success;
         }
 
         public override BuildProgress GetProgress()

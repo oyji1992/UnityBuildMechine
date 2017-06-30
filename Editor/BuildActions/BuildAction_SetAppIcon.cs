@@ -9,10 +9,10 @@
             this.path = path;
         }
 
-        public override void Build()
+        public override void OnEnter()
         {
             BuildHelper.SetAppIcon(path);
-            State = BuildState.Succeed;
+            State = BuildState.Success;
         }
 
         public override BuildProgress GetProgress()

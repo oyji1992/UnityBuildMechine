@@ -11,10 +11,15 @@ namespace UniGameTools.BuildMechine.BuildActions
             this.Msg = msg;
         }
 
-        public override void Build()
+        public override void OnEnter()
         {
             Debug.Log(Msg);
-            this.State = BuildState.Succeed;
+            this.State = BuildState.Success;
+        }
+
+        public override void OnUpdate()
+        {
+            base.OnUpdate();
         }
 
         public override BuildProgress GetProgress()
