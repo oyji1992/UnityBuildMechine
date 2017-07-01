@@ -9,10 +9,10 @@
             this.sceneNames = sceneNames;
         }
 
-        public override void OnEnter()
+        public override BuildState OnUpdate()
         {
             BuildHelper.SetBuildScenes(sceneNames);
-            State = BuildState.Success;
+            return BuildState.Success;
         }
 
         public override BuildProgress GetProgress()

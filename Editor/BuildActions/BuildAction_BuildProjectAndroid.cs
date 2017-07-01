@@ -15,7 +15,7 @@ namespace UniGameTools.BuildMechine.BuildActions
             _projectName = projectName;
         }
 
-        public override void OnEnter()
+        public override BuildState OnUpdate()
         {
 
             PlayerSettings.keyaliasPass = string.IsNullOrEmpty(PlayerSettings.keyaliasPass) ? "123456" : PlayerSettings.keyaliasPass;
@@ -51,7 +51,7 @@ namespace UniGameTools.BuildMechine.BuildActions
 
             Debug.LogFormat("打包至 {0} 结果 {1}", path, res);
 
-            this.State = BuildState.Success;
+            return BuildState.Success;
         }
 
         public override BuildProgress GetProgress()

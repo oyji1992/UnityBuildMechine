@@ -3,7 +3,7 @@
     public enum BuildState
     {
         None,
-        InProgress,
+        Running,
         Success,
         Failure
     }

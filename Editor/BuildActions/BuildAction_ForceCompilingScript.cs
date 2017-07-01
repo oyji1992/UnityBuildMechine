@@ -7,7 +7,7 @@ namespace UniGameTools.BuildMechine.BuildActions
 {
     public class BuildAction_ForceCompilingScript : BuildAction
     {
-        public override void OnEnter()
+        public override BuildState OnUpdate()
         {
             MonoScript cMonoScript = null;
 
@@ -31,7 +31,7 @@ namespace UniGameTools.BuildMechine.BuildActions
                 Debug.LogError("No found any runtime script to reimport");
             }
 
-            this.State = BuildState.Success;
+            return BuildState.Success;
         }
 
         public override BuildProgress GetProgress()

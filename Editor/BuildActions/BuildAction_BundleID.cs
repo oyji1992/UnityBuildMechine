@@ -16,7 +16,7 @@ namespace UniGameTools.BuildMechine.BuildActions
             this.BundleID = id;
         }
 
-        public override void OnEnter()
+        public override BuildState OnUpdate()
         {
 #if UNITY_5_6_OR_NEWER
             PlayerSettings.applicationIdentifier = BundleID;
@@ -24,7 +24,7 @@ namespace UniGameTools.BuildMechine.BuildActions
             PlayerSettings.bundleIdentifier = BundleID;
             PlayerSettings.iPhoneBundleIdentifier = BundleID;
 #endif
-            State = BuildState.Success;
+            return BuildState.Success;
         }
 
         public override BuildProgress GetProgress()

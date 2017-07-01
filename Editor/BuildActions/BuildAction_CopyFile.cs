@@ -14,14 +14,14 @@ namespace UniGameTools.BuildMechine.BuildActions
             SrcPath = srcPath;
         }
 
-        public override void OnEnter()
+        public override BuildState OnUpdate()
         {
             var dir = Application.dataPath.Replace("/Assets", "");
             var src = Path.Combine(dir, SrcPath);
             var des = Path.Combine(dir, TargetPath);
 
             CopyFolder(src, des);
-            this.State = BuildState.Success;
+            return BuildState.Success;
         }
 
 

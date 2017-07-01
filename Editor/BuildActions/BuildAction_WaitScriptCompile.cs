@@ -10,10 +10,23 @@ namespace UniGameTools.BuildMechine.BuildActions
 
         private double WaitCompileFinishedTime;
 
-        public override void OnEnter()
+        private BuildState _currentState = BuildState.None;
+
+        private bool start = false;
+
+        public override BuildState OnUpdate()
         {
-            StartTime = EditorApplication.timeSinceStartup;
-            EditorApplication.update += UpdateFunction;
+            if (start == false)
+            {
+                start = true;
+                StartTime = EditorApplication.timeSinceStartup;
+                EditorApplication.update += UpdateFunction;
+            }
+
+
+            return _currentState;
+
+
         }
 
         private void UpdateFunction()
@@ -21,9 +34,9 @@ namespace UniGameTools.BuildMechine.BuildActions
             if (CurrentProgress == 0 && StartTime + 10 < EditorApplication.timeSinceStartup)
             {
                 Debug.Log("跳过了等待编译");
-                this.State = BuildState.Success;
                 EditorApplication.update -= UpdateFunction;
-                return;
+                this._currentState = BuildState.Success;
+
             }
 
             if (CurrentProgress == 0 && EditorApplication.isCompiling == true)
@@ -40,9 +53,9 @@ namespace UniGameTools.BuildMechine.BuildActions
             }
             if (CurrentProgress == 2 && EditorApplication.timeSinceStartup > WaitCompileFinishedTime + 5.0f)
             {
-                this.State = BuildState.Success;
                 EditorApplication.update -= UpdateFunction;
-                return;
+                this._currentState = BuildState.Success;
+
             }
         }
 

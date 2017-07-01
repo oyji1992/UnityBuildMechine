@@ -14,39 +14,37 @@ namespace UniGameTools.BuildMechine
     /// </summary>
     public abstract class BuildAction
     {
-        /// <summary>
-        /// 
-        /// </summary>
-        private BuildState _state;
+        //        /// <summary>
+        //        /// 
+        //        /// </summary>
+        //        private BuildState _state;
 
         /// <summary>
         /// 属性
         /// </summary>
         public List<Info> Infos = new List<Info>();
 
-        /// <summary>
-        /// 当前进度
-        /// </summary>
-        public BuildState State
-        {
-            get
-            {
-                return _state;
-            }
-            set
-            {
-                _state = value;
+        //        /// <summary>
+        //        /// 当前进度
+        //        /// </summary>
+        //        public BuildState State
+        //        {
+        //            get
+        //            {
+        //                return _state;
+        //            }
+        //            set
+        //            {
+        //                _state = value;
+        //
+        //                //            if (_state != BuildState.Building)
+        //                //            {
+        //                //                if (Mechine != null) Mechine.Update();
+        //                //            }
+        //            }
+        //        }
 
-                //            if (_state != BuildState.Building)
-                //            {
-                //                if (Mechine != null) Mechine.Update();
-                //            }
-            }
-        }
-
-        public virtual void OnUpdate() { }
-
-        public abstract void OnEnter();
+        public abstract BuildState OnUpdate();
 
         /// <summary>
         /// 获得当前进度

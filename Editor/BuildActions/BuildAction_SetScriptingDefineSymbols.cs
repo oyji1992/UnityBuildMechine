@@ -24,7 +24,7 @@ namespace UniGameTools.BuildMechine.BuildActions
             BuildTargetGroup = buildTargetGroup;
         }
 
-        public override void OnEnter()
+        public override BuildState OnUpdate()
         {
             if (symbols == null)
             {
@@ -39,7 +39,7 @@ namespace UniGameTools.BuildMechine.BuildActions
             }
 
             PlayerSettings.SetScriptingDefineSymbolsForGroup(BuildTargetGroup, sb.ToString());
-            State = BuildState.Success;
+            return BuildState.Success;
         }
 
         public override BuildProgress GetProgress()

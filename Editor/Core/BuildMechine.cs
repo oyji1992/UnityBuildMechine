@@ -103,19 +103,20 @@ namespace UniGameTools.BuildMechine
         {
             if (CurrentBuildAction != null)
             {
-                switch (CurrentBuildAction.State)
+                var buildState = CurrentBuildAction.OnUpdate();
+                switch (buildState)
                 {
                     case BuildState.None:
                         {
-                            Debug.Log("Start Action: " + CurrentBuildAction.GetType());
+                            // Debug.Log("Start Action: " + CurrentBuildAction.GetType());
 
-                            CurrentBuildAction.State = BuildState.InProgress;
-                            CurrentBuildAction.OnEnter();
+                            // CurrentBuildAction.State = BuildState.InProgress;
+                            // CurrentBuildAction.OnEnter();
                         }
                         break;
-                    case BuildState.InProgress:
+                    case BuildState.Running:
                         {
-                            CurrentBuildAction.OnUpdate();
+                            // CurrentBuildAction.OnUpdate();
                         }
                         break;
                     case BuildState.Success:
@@ -127,7 +128,6 @@ namespace UniGameTools.BuildMechine
                             if (CurrentBuildAction != null)
                             {
                                 Debug.Log("Start Next Step : " + CurrentBuildAction.GetType());
-                                CurrentBuildAction.State = BuildState.None;
                                 JsonInstance = this;
                             }
                             else

@@ -16,10 +16,10 @@ namespace UniGameTools.BuildMechine.BuildActions
             this.CompanyName = companyName;
         }
 
-        public override void OnEnter()
+        public override BuildState OnUpdate()
         {
             PlayerSettings.companyName = CompanyName;
-            State = BuildState.Success;
+            return BuildState.Success;
         }
 
         public override BuildProgress GetProgress()

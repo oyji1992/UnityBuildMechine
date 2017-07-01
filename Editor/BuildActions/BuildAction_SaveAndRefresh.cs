@@ -4,11 +4,11 @@ namespace UniGameTools.BuildMechine.BuildActions
 {
     public class BuildAction_SaveAndFresh : BuildAction
     {
-        public override void OnEnter()
+        public override BuildState OnUpdate()
         {
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
-            this.State = BuildState.Success;
+            return BuildState.Success;
         }
 
         public override BuildProgress GetProgress()

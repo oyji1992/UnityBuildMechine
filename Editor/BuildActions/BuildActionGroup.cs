@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace UniGameTools.BuildMechine.BuildActions
 {
@@ -12,30 +13,27 @@ namespace UniGameTools.BuildMechine.BuildActions
             Actions = actions;
         }
 
-        public override void OnEnter()
+        public override BuildState OnUpdate()
         {
-            CurrentIndex = 0;
+            var buildState = Actions[CurrentIndex].OnUpdate();
 
-            Actions[CurrentIndex].OnEnter();
-            Debug.Log("Do " + Actions[CurrentIndex]);
-        }
-
-        public override void OnUpdate()
-        {
-            if (Actions[CurrentIndex].State == BuildState.Success)
+            switch (buildState)
             {
-                CurrentIndex++;
+                case BuildState.Success:
+                    CurrentIndex++;
 
-                if (CurrentIndex < Actions.Length)
-                {
-                    Actions[CurrentIndex].OnEnter();
-                    Debug.Log("Do " + Actions[CurrentIndex]);
-                }
-                else
-                {
-                    State = BuildState.Success;
-                }
+                    if (CurrentIndex >= Actions.Length)
+                    {
+                        return BuildState.Success;
+                    }
+                    break;
+                case BuildState.None:
+                case BuildState.Running:
+                case BuildState.Failure:
+                    return buildState;
             }
+
+            return BuildState.Running;
         }
 
         public override BuildProgress GetProgress()
