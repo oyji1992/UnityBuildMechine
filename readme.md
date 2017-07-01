@@ -24,22 +24,15 @@ public class BuildAction_CustomAction : BuildAction
         this.Msg = msg;
     }
 
-    // 进入时候更新
-    public override void OnEnter()
+    public override BuildState OnUpdate()
     {
         Debug.Log(Msg);
         
         // 状态被设置成Success后，一下次tick会进入下一个任务
-        this.State = BuildState.Success;
+        return BuildState.Success;
 
         // 状态被设置成Failure后，一下次tick会结束任务队列
-        // this.State = BuildState.Failure;
-    }
-
-    // 每一帧更新
-    public override void OnUpdate()
-    {
-        base.Update();
+        // return BuildState.Failure;
     }
 
     public override BuildProgress GetProgress()
