@@ -20,4 +20,12 @@
             return null;
         }
     }
+
+    public class BuildAction_Error : BuildAction
+    {
+        public override BuildState OnUpdate()
+        {
+            return BuildState.Failure;
+        }
+    }
 }

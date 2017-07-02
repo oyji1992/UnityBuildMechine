@@ -51,7 +51,7 @@ namespace UniGameTools.BuildMechine.BuildActions
                 CurrentProgress = 2;
 
             }
-            if (CurrentProgress == 2 && EditorApplication.timeSinceStartup > WaitCompileFinishedTime + 5.0f)
+            if (CurrentProgress == 2 && EditorApplication.timeSinceStartup > WaitCompileFinishedTime + 2.0f)
             {
                 EditorApplication.update -= UpdateFunction;
                 this._currentState = BuildState.Success;

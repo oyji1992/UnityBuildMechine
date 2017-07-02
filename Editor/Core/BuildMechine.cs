@@ -17,6 +17,8 @@ namespace UniGameTools.BuildMechine
 
         public int CurrentActionIndex;
 
+        public bool ErrorStop;
+
         public static bool IsBuilding
         {
             get { return EditorPrefs.GetBool("BuildMechine.IsBuilding", false); }
@@ -44,7 +46,7 @@ namespace UniGameTools.BuildMechine
 
                 var collection = JsonUtility.FromJson<WarperCollection>(s2);
                 mechine.Actions = collection.Warpers.Select(r => r.GetAction()).ToList();
-                
+
                 return mechine;
             }
             set
@@ -63,8 +65,8 @@ namespace UniGameTools.BuildMechine
                     var json = JsonUtility.ToJson(value);
                     EditorPrefs.SetString("BuildMechine.JsonInstance", json);
 
-                    var warpers = value.Actions.Select(r => new Warper().SetAction(r)).ToList();    
-                    var collection = new WarperCollection(){Warpers = warpers};
+                    var warpers = value.Actions.Select(r => new Warper().SetAction(r)).ToList();
+                    var collection = new WarperCollection() { Warpers = warpers };
 
                     var warpersJson = JsonUtility.ToJson(collection);
                     //                Debug.LogError("actions : " + warpersJson);
@@ -142,7 +144,7 @@ namespace UniGameTools.BuildMechine
                         {
                             Infos.AddRange(CurrentBuildAction.Infos);
                             Debug.LogError("打包结束。打包失败了");
-                            CurrentActionIndex = int.MaxValue;
+                            ErrorStop = true;
                             BuildFinished();
                         }
                         break;
@@ -161,8 +163,6 @@ namespace UniGameTools.BuildMechine
             }
 
             JsonInstance = null;
-
-            EditorWindow.GetWindow<BuildMechineWindows>().Close();
 
             EditorUtility.ClearProgressBar();
 

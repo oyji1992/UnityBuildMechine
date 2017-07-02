@@ -13,7 +13,7 @@ namespace UniGameTools.BuildMechine.BuildActions
 
         public override BuildState OnUpdate()
         {
-            Debug.Log(Msg);
+            Debug.LogWarning(Msg);
             return BuildState.Success;
         }
 

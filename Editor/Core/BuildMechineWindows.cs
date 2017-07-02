@@ -1,47 +1,98 @@
+using System.Collections.Generic;
+using System.Text;
 using UnityEditor;
+using UnityEngine;
 
 namespace UniGameTools.BuildMechine
 {
     public class BuildMechineWindows : EditorWindow
     {
+        private class Info
+        {
+            public int Index;
+            public string ActionName;
+            public string State;
+        }
+
+        private List<Info> Infos = new List<Info>();
+        private Vector2 scrollPosition;
+
         void OnGUI()
         {
-            if (EditorApplication.isCompiling)
+            var style = new GUIStyle()
             {
-                EditorGUILayout.LabelField("Compiling...");
-                return;
-            }
+                richText = true,
+                fontSize = 11,
+                normal = new GUIStyleState() { textColor = Color.grey }
+            };
 
             if (BuildMechine.Instance != null)
             {
-                EditorGUILayout.LabelField(string.Format("当前第 {0} 步 : ({1})，总共 {2} 步 ",
-                    BuildMechine.Instance.CurrentActionIndex + 1,
-                    BuildMechine.Instance.CurrentBuildAction.GetType(),
-                    BuildMechine.Instance.Actions.Count));
+                Infos.Clear();
+
+                for (var index = 0; index < BuildMechine.Instance.Actions.Count; index++)
+                {
+                    var instanceAction = BuildMechine.Instance.Actions[index];
+
+                    var state = "<color=grey>未运行</color>";
+
+                    if (index == BuildMechine.Instance.CurrentActionIndex)
+                    {
+                        if (BuildMechine.Instance.ErrorStop == false)
+                        {
+                            state = "<color=yellow>运行中</color>";
+                        }
+                        else
+                        {
+                            state = "<color=red>失败！</color>";
+                        }
+                    }
+                    else if (index < BuildMechine.Instance.CurrentActionIndex)
+                    {
+                        state = "<color=green>已完成</color>";
+                    }
+
+                    Infos.Add(new Info()
+                    {
+                        Index = index,
+                        ActionName = instanceAction.GetType().Name,
+                        State = state
+                    });
+                }
 
                 BuildMechine.ShowProgress();
             }
-        }
 
-        private bool _needCheckMechine = true;
+            EditorGUILayout.Space();
+
+            scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition);
+
+            EditorGUILayout.LabelField("Infos : ");
+
+            foreach (var info in Infos)
+            {
+                EditorGUILayout.BeginHorizontal();
+                {
+                    EditorGUILayout.LabelField((info.Index + 1).ToString("d2") + ".", style, GUILayout.Width(30));
+                    EditorGUILayout.LabelField(string.Format("[{0}", info.ActionName), style, GUILayout.Width(300));
+                    EditorGUILayout.LabelField(string.Format("] : "), style, GUILayout.Width(20));
+                    EditorGUILayout.LabelField(string.Format("[{0}]", info.State), style, GUILayout.Width(30));
+                }
+                EditorGUILayout.EndHorizontal();
+            }
+
+            EditorGUILayout.EndScrollView();
+        }
 
         void Update()
         {
             if (BuildMechine.Instance != null)
             {
                 BuildMechine.Instance.UpdateMethod();
-                return;
             }
             else
             {
-                if (_needCheckMechine == false)
-                {
-                    this.Close();
-                    return;
-                }
-
                 //_needCheckMechine = false;
-
                 var jsonInstance = BuildMechine.JsonInstance;
                 if (jsonInstance != null)
                 {
@@ -49,7 +100,7 @@ namespace UniGameTools.BuildMechine
                     BuildMechine.JsonInstance = null;
                 }
             }
-
+            Repaint();
         }
     }
 }

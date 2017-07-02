@@ -2,6 +2,10 @@
 
 **In Progress**
 
+# 项目介绍
+通过BuildMechine实现Unity自动化打包流程
+
+
 # 使用方式
 ```
 BuildMechine.SetPipeline(
