@@ -4,13 +4,13 @@ using UnityEngine;
 namespace UniGameTools.BuildMechine
 {
     [Serializable]
-    public class Warper
+    public class ActionWarper
     {
         public string Type;
 
         public string ActionJson;
 
-        public Warper SetAction(BuildAction action)
+        public ActionWarper SetAction(BuildAction action)
         {
             ActionJson = JsonUtility.ToJson(action);
             Type = action.GetType().FullName;

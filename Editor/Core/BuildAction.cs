@@ -2,48 +2,20 @@
 
 namespace UniGameTools.BuildMechine
 {
-    public class BuildProgress
-    {
-        public string Title;
-        public string Content;
-        public float Porgress;
-    }
-
     /// <summary>
     /// 编译会导致非公开变量的值丢失
     /// </summary>
     public abstract class BuildAction
     {
-        //        /// <summary>
-        //        /// 
-        //        /// </summary>
-        //        private BuildState _state;
+        /// <summary>
+        /// 上下文
+        /// </summary>
+        public BuildContext Context = new BuildContext();
 
         /// <summary>
-        /// 属性
+        /// 更新方法
+        /// 每Tick调用
         /// </summary>
-        public List<Info> Infos = new List<Info>();
-
-        //        /// <summary>
-        //        /// 当前进度
-        //        /// </summary>
-        //        public BuildState State
-        //        {
-        //            get
-        //            {
-        //                return _state;
-        //            }
-        //            set
-        //            {
-        //                _state = value;
-        //
-        //                //            if (_state != BuildState.Building)
-        //                //            {
-        //                //                if (Mechine != null) Mechine.Update();
-        //                //            }
-        //            }
-        //        }
-
         public abstract BuildState OnUpdate();
 
         /// <summary>

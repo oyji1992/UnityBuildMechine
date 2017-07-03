@@ -8,6 +8,6 @@ namespace UniGameTools.BuildMechine
     public class WarperCollection
     {
         [SerializeField]
-        public List<Warper> Warpers;
+        public List<ActionWarper> Warpers;
     }
 }

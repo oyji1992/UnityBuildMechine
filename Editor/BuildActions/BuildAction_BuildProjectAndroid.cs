@@ -13,11 +13,7 @@ namespace UniGameTools.BuildMechine.BuildActions
         public string BuildPath;
         public string ProjectName;
 
-        public BuildAction_BuildProjectAndroid(
-            string projectName, 
-            string buildPath, 
-            string keyAliasPass,
-            string keyStorePass)
+        public BuildAction_BuildProjectAndroid(string projectName, string buildPath, string keyAliasPass = "", string keyStorePass = "")
         {
             KeyAliasPass = keyAliasPass;
             KeyStorePass = keyStorePass;
@@ -63,6 +59,9 @@ namespace UniGameTools.BuildMechine.BuildActions
             var res = BuildPipeline.BuildPlayer(listScene.ToArray(), path, BuildTarget.Android, BuildOptions.None);
 
             Debug.LogFormat("打包至 {0} 结果 {1}", path, res);
+
+            Context.Set("BuildPath", path);
+
 
             return BuildState.Success;
         }

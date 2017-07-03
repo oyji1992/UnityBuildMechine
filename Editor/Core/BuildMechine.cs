@@ -8,47 +8,68 @@ namespace UniGameTools.BuildMechine
 {
     public class BuildMechine
     {
+        /// <summary>
+        /// Instance
+        /// </summary>
         public static BuildMechine Instance;
 
-        public List<Info> Infos = new List<Info>();
+        /// <summary>
+        /// Context
+        /// 用于Action之间数据传递
+        /// </summary>
+        public BuildContext Context = new BuildContext();
 
+        /// <summary>
+        /// Actions
+        /// </summary>
         [NonSerialized]
         public List<BuildAction> Actions = new List<BuildAction>();
 
+        /// <summary>
+        /// 记录各个Actions的时间
+        /// </summary>
         public List<BuildTimer> ActionTimers = new List<BuildTimer>();
 
+        /// <summary>
+        /// 当前Action的下标
+        /// </summary>
         public int CurrentActionIndex;
 
+        /// <summary>
+        /// 是否发生了任意错误
+        /// 如果是，管线将会暂停
+        /// </summary>
         public bool AnyError;
 
+        /// <summary>
+        /// 是否正在打包
+        /// </summary>
         public static bool IsBuilding
         {
             get { return EditorPrefs.GetBool("BuildMechine.IsBuilding", false); }
             set { EditorPrefs.SetBool("BuildMechine.IsBuilding", value); }
         }
 
+        /// <summary>
+        /// 记录管线的总运行时间
+        /// </summary>
         public BuildTimer MechineTimer = new BuildTimer();
 
         public static BuildMechine JsonInstance
         {
             get
             {
-                //            JsonSerializerSettings setting = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto };
-                //            return JsonConvert.DeserializeObject<BuildMechine>(s, setting);
+                // 解析BuildMechine中的数据
+                var mechineJson = EditorPrefs.GetString("BuildMechine.JsonInstance", "");
+                if (string.IsNullOrEmpty(mechineJson)) return null;
 
-                var s = EditorPrefs.GetString("BuildMechine.JsonInstance", "");
-                if (string.IsNullOrEmpty(s)) return null;
+                var mechine = JsonUtility.FromJson<BuildMechine>(mechineJson);
 
-                Debug.Log("Load Json Instance");
-                var mechine = JsonUtility.FromJson<BuildMechine>(s);
+                // 解析Action数据
+                var actionJson = EditorPrefs.GetString("BuildMechine.Actions", "");
+                if (string.IsNullOrEmpty(actionJson)) return null;
 
-                var s2 = EditorPrefs.GetString("BuildMechine.Actions", "");
-                if (string.IsNullOrEmpty(s2))
-                {
-                    return null;
-                }
-
-                var collection = JsonUtility.FromJson<WarperCollection>(s2);
+                var collection = JsonUtility.FromJson<WarperCollection>(actionJson);
                 mechine.Actions = collection.Warpers.Select(r => r.GetAction()).ToList();
 
                 return mechine;
@@ -62,28 +83,25 @@ namespace UniGameTools.BuildMechine
                 }
                 else
                 {
-                    //                JsonSerializerSettings setting = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto };
-                    //                var json = JsonConvert.SerializeObject(value, Formatting.Indented, setting);
-                    //                EditorPrefs.SetString("BuildMechine.JsonInstance", json);
+                    var mechineJson = JsonUtility.ToJson(value, true);
+                    EditorPrefs.SetString("BuildMechine.JsonInstance", mechineJson);
 
-                    var json = JsonUtility.ToJson(value, true);
-                    EditorPrefs.SetString("BuildMechine.JsonInstance", json);
-
-                    Debug.Log(json);
-
-                    var warpers = value.Actions.Select(r => new Warper().SetAction(r)).ToList();
+                    var warpers = value.Actions.Select(r => new ActionWarper().SetAction(r)).ToList();
                     var collection = new WarperCollection() { Warpers = warpers };
 
                     var warpersJson = JsonUtility.ToJson(collection);
-                    //                Debug.LogError("actions : " + warpersJson);
 
                     EditorPrefs.SetString("BuildMechine.Actions", warpersJson);
-                    //                Debug.Log("Save : ");
-                    //                Debug.Log(serializeObject);
+
+                    // Debug.Log(json);
+
                 }
             }
         }
 
+        /// <summary>
+        /// 当前Action
+        /// </summary>
         public BuildAction CurrentBuildAction
         {
             get
@@ -91,14 +109,6 @@ namespace UniGameTools.BuildMechine
                 return Actions.Count > CurrentActionIndex ? Actions[CurrentActionIndex] : null;
             }
         }
-
-        public BuildProgress GetProgress()
-        {
-            if (CurrentBuildAction != null) return CurrentBuildAction.GetProgress();
-
-            return null;
-        }
-
         //    public void Update()
         //    {
         //        EditorApplication.delayCall += () =>
@@ -107,6 +117,9 @@ namespace UniGameTools.BuildMechine
         //        };
         //    }
 
+        /// <summary>
+        /// 更新方法
+        /// </summary>
         public void UpdateMethod()
         {
             if (CurrentBuildAction != null)
@@ -115,22 +128,10 @@ namespace UniGameTools.BuildMechine
                 switch (buildState)
                 {
                     case BuildState.None:
-                        {
-                            // Debug.Log("Start Action: " + CurrentBuildAction.GetType());
-
-                            // CurrentBuildAction.State = BuildState.InProgress;
-                            // CurrentBuildAction.OnEnter();
-                        }
-                        break;
                     case BuildState.Running:
-                        {
-                            // CurrentBuildAction.OnUpdate();
-                        }
                         break;
                     case BuildState.Success:
                         {
-                            Infos.AddRange(CurrentBuildAction.Infos);
-
                             OnActionEnd(CurrentActionIndex);
 
                             CurrentActionIndex++;
@@ -139,7 +140,7 @@ namespace UniGameTools.BuildMechine
                             {
                                 OnActionEnter(CurrentActionIndex);
 
-                                Debug.Log("Start Next Step : " + CurrentBuildAction.GetType());
+                                Debug.Log("<color=yellow>BuildMechine</color> : Move To Next : <color=orange>" + CurrentBuildAction.GetType().Name + "</color>");
                                 JsonInstance = this;
                             }
                             else
@@ -150,9 +151,9 @@ namespace UniGameTools.BuildMechine
                         break;
                     case BuildState.Failure:
                         {
+                            Debug.LogError("<color=yellow>BuildMechine</color> : Build Fail!!!");
+
                             OnActionEnd(CurrentActionIndex);
-                            Infos.AddRange(CurrentBuildAction.Infos);
-                            Debug.LogError("打包结束。打包失败了");
                             BuildFinished(true);
                         }
                         break;
@@ -165,11 +166,15 @@ namespace UniGameTools.BuildMechine
         private void OnActionEnter(int index)
         {
             ActionTimers[index].StartTime = DateTime.Now.Ticks;
+
+            CurrentBuildAction.Context.Merge(this.Context);
         }
 
         private void OnActionEnd(int index)
         {
             ActionTimers[index].EndTime = DateTime.Now.Ticks;
+
+            this.Context.Merge(CurrentBuildAction.Context);
         }
 
         private void BuildFinished(bool anyError)
@@ -179,10 +184,7 @@ namespace UniGameTools.BuildMechine
 
 
             // Log All Errors;
-            foreach (var error in Infos)
-            {
-                Debug.LogError(string.Format("{0} - {1}", error.Key, error.Value));
-            }
+            Debug.Log(Context);
 
             IsBuilding = false;
 
@@ -190,7 +192,8 @@ namespace UniGameTools.BuildMechine
 
             EditorUtility.ClearProgressBar();
 
-            Debug.Log("--------------------打包结束--------------------");
+            Debug.LogWarning("<color=yellow>BuildMechine</color> : Build Finished !!!");
+
         }
 
         public bool IsFinished
@@ -243,6 +246,17 @@ namespace UniGameTools.BuildMechine
             //        Instance.CurrentBuildAction = actions[0];
         }
 
+        /// <summary>
+        /// 获得当前进度
+        /// </summary>
+        /// <returns></returns>
+        public BuildProgress GetProgress()
+        {
+            if (CurrentBuildAction != null) return CurrentBuildAction.GetProgress();
+
+            return null;
+        }
+
         public static void ShowProgress()
         {
             if (Instance != null)
@@ -255,18 +269,6 @@ namespace UniGameTools.BuildMechine
                     EditorUtility.DisplayProgressBar(progress.Title, progress.Content, progress.Porgress);
                 }
             }
-        }
-    }
-
-    [Serializable]
-    public class BuildTimer
-    {
-        public long StartTime;
-        public long EndTime;
-
-        public TimeSpan Duration
-        {
-            get { return BuildHelper.CalDuration(DateTime.Now.Ticks, StartTime, EndTime); }
         }
     }
 }

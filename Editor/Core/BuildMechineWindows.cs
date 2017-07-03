@@ -8,7 +8,7 @@ namespace UniGameTools.BuildMechine
 {
     public class BuildMechineWindows : EditorWindow
     {
-        private class Info
+        private class BuildInfo
         {
             public int Index;
             public string ActionName;
@@ -16,7 +16,10 @@ namespace UniGameTools.BuildMechine
             public TimeSpan Duration;
         }
 
-        private List<Info> Infos = new List<Info>();
+        private List<BuildInfo> BuildInfos = new List<BuildInfo>();
+
+        private BuildContext RuntimeContext = new BuildContext();
+
         private Vector2 _scrollPosition;
         private TimeSpan _totalDuration;
 
@@ -30,7 +33,9 @@ namespace UniGameTools.BuildMechine
         {
             if (BuildMechine.Instance != null)
             {
-                Infos.Clear();
+                BuildInfos.Clear();
+
+                RuntimeContext = BuildMechine.Instance.Context;
 
                 for (var index = 0; index < BuildMechine.Instance.Actions.Count; index++)
                 {
@@ -54,7 +59,7 @@ namespace UniGameTools.BuildMechine
                         state = "<color=green>已完成</color>";
                     }
 
-                    Infos.Add(new Info()
+                    BuildInfos.Add(new BuildInfo()
                     {
                         Index = index,
                         ActionName = instanceAction.GetType().Name,
@@ -75,40 +80,60 @@ namespace UniGameTools.BuildMechine
             {
                 richText = true,
                 fontSize = 11,
-                normal = new GUIStyleState() {textColor = Color.grey}
+                normal = new GUIStyleState() { textColor = Color.grey }
             };
 
             EditorGUILayout.Space();
 
-            EditorGUILayout.LabelField(string.Format("Total Time : {0}:{1:d2}.{2:d3}", 
+            EditorGUILayout.LabelField(string.Format("Total Time : {0}:{1:d2}.{2:d3}",
                 _totalDuration.Minutes,
                 _totalDuration.Seconds,
                 _totalDuration.Milliseconds));
 
             _scrollPosition = EditorGUILayout.BeginScrollView(_scrollPosition);
-
-            EditorGUILayout.LabelField("Infos : ");
-
-            foreach (var info in Infos)
             {
-                EditorGUILayout.BeginHorizontal();
+                //-----------------------------RuntimeContext-----------------------------//
+                EditorGUILayout.LabelField("RuntimeContext");
+
+                if (RuntimeContext.Contexts.Count > 0)
                 {
-                    EditorGUILayout.LabelField((info.Index + 1).ToString("d2") + ".", style, GUILayout.Width(30));
-                    EditorGUILayout.LabelField(string.Format("[{0}", info.ActionName), style, GUILayout.Width(300));
-                    EditorGUILayout.LabelField(string.Format("] : "), style, GUILayout.Width(20));
-                    EditorGUILayout.LabelField(string.Format("[{0}]", info.State), style, GUILayout.Width(50));
-
-                    EditorGUILayout.LabelField(string.Format("{0:d2}.{1:d3}", 
-                        (int) info.Duration.TotalSeconds, 
-                        info.Duration.Milliseconds),
-                        GUILayout.Width(80));
+                    EditorGUILayout.BeginVertical("box");
+                    {
+                        foreach (var info in RuntimeContext.Contexts)
+                        {
+                            EditorGUILayout.BeginHorizontal();
+                            {
+                                EditorGUILayout.LabelField(string.Format("{0} -> {1}", info.Key, info.Value));
+                            }
+                            EditorGUILayout.EndHorizontal();
+                        }
+                    }
+                    EditorGUILayout.EndVertical();
                 }
-                EditorGUILayout.EndHorizontal();
+
+                EditorGUILayout.Space();
+
+                EditorGUILayout.LabelField("BuildInfos");
+                //-----------------------------BuildInfos-----------------------------//
+                foreach (var info in BuildInfos)
+                {
+                    EditorGUILayout.BeginHorizontal("box");
+                    {
+                        EditorGUILayout.LabelField((info.Index + 1).ToString("d2") + ".", style, GUILayout.Width(30));
+                        EditorGUILayout.LabelField(string.Format("[{0}", info.ActionName), style, GUILayout.Width(300));
+                        EditorGUILayout.LabelField(string.Format("] : "), style, GUILayout.Width(20));
+                        EditorGUILayout.LabelField(string.Format("[{0}]", info.State), style, GUILayout.Width(50));
+
+                        EditorGUILayout.LabelField(string.Format("{0:d2}.{1:d3}",
+                                (int)info.Duration.TotalSeconds,
+                                info.Duration.Milliseconds),
+                            GUILayout.Width(80));
+                    }
+                    EditorGUILayout.EndHorizontal();
+                }
+
             }
-
             EditorGUILayout.EndScrollView();
-
-            EditorGUILayout.Space();
         }
 
         void Update()
