@@ -8,19 +8,30 @@ namespace UniGameTools.BuildMechine.BuildActions
 {
     public class BuildAction_BuildProjectAndroid : BuildAction
     {
-        public string _projectName;
+        public string KeyAliasPass;
+        public string KeyStorePass;
+        public string BuildPath;
+        public string ProjectName;
 
-        public BuildAction_BuildProjectAndroid(string projectName)
+        public BuildAction_BuildProjectAndroid(
+            string projectName, 
+            string buildPath, 
+            string keyAliasPass,
+            string keyStorePass)
         {
-            _projectName = projectName;
+            KeyAliasPass = keyAliasPass;
+            KeyStorePass = keyStorePass;
+            BuildPath = buildPath;
+            ProjectName = projectName;
         }
 
         public override BuildState OnUpdate()
         {
+            PlayerSettings.keyaliasPass = KeyAliasPass;
+            PlayerSettings.keystorePass = KeyStorePass;
 
-            PlayerSettings.keyaliasPass = string.IsNullOrEmpty(PlayerSettings.keyaliasPass) ? "123456" : PlayerSettings.keyaliasPass;
-            PlayerSettings.keystorePass = string.IsNullOrEmpty(PlayerSettings.keystorePass) ? "123456" : PlayerSettings.keystorePass;
-
+            Debug.LogWarning("Build Scenes : ");
+            Debug.LogWarning("============================");
             var listScene = new List<string>();
             for (var i = 0; i < EditorBuildSettings.scenes.Length; i++)
             {
@@ -31,11 +42,13 @@ namespace UniGameTools.BuildMechine.BuildActions
                     Debug.Log(s.path);
                 }
             }
+            Debug.LogWarning("============================");
 
-            var newFileName = PlayerSettings.productName + "_" + _projectName + DateTime.Now.ToString("_yyyyMMddHHmm");
+            // projectName_yyyyMMddHHmm
+            var newFileName = ProjectName + DateTime.Now.ToString("_yyyyMMddHHmm");
             var dir = Application.dataPath.Replace("/Assets", "");
 
-            var path = string.Format("AutoBuild_{0}/{1}/{2}.apk", Path.GetFileName(dir), newFileName, newFileName);
+            var path = string.Format("{0}/{1}.apk", BuildPath, newFileName);
 
             path = Path.Combine(dir, path);
             dir = Path.GetDirectoryName(path);

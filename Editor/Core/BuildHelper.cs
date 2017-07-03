@@ -64,6 +64,7 @@ namespace UniGameTools.BuildMechine
             {
                 textures.Add(tex);
             }
+
             PlayerSettings.SetIconsForTargetGroup(buildTargetGroup, textures.ToArray());
         }
 

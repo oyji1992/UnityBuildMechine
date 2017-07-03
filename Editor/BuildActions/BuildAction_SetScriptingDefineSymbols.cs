@@ -5,12 +5,12 @@ namespace UniGameTools.BuildMechine.BuildActions
 {
     public class BuildAction_SetScriptingDefineSymbols : BuildAction
     {
-        public string[] symbols;
+        public string[] Symbols;
         public BuildTargetGroup BuildTargetGroup = BuildTargetGroup.Standalone;
 
         public BuildAction_SetScriptingDefineSymbols(params string[] symbols)
         {
-            this.symbols = symbols;
+            this.Symbols = symbols;
         }
 
         public BuildAction_SetScriptingDefineSymbols()
@@ -20,25 +20,26 @@ namespace UniGameTools.BuildMechine.BuildActions
 
         public BuildAction_SetScriptingDefineSymbols(BuildTargetGroup buildTargetGroup, params string[] symbols)
         {
-            this.symbols = symbols;
-            BuildTargetGroup = buildTargetGroup;
+            this.Symbols = symbols;
+            this.BuildTargetGroup = buildTargetGroup;
         }
 
         public override BuildState OnUpdate()
         {
-            if (symbols == null)
+            if (this.Symbols == null)
             {
-                symbols = new[] { "" };
+                this.Symbols = new[] { "" };
             }
 
             var sb = new StringBuilder();
 
-            foreach (var symbol in symbols)
+            foreach (var symbol in this.Symbols)
             {
                 sb.Append(symbol + ";");
             }
 
-            PlayerSettings.SetScriptingDefineSymbolsForGroup(BuildTargetGroup, sb.ToString());
+            PlayerSettings.SetScriptingDefineSymbolsForGroup(this.BuildTargetGroup, sb.ToString());
+
             return BuildState.Success;
         }
 
