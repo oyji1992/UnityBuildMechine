@@ -121,5 +121,16 @@ namespace UniGameTools.BuildMechine
 
             return buildNumber;
         }
+
+        public static TimeSpan CalDuration(long nowTick, long startTime, long endTime)
+        {
+            if (startTime == endTime) return TimeSpan.Zero;
+
+            if (startTime > endTime)
+            {
+                return TimeSpan.FromTicks(nowTick - startTime);
+            }
+            return TimeSpan.FromTicks(endTime - startTime);
+        }
     }
 }

@@ -15,6 +15,8 @@ namespace UniGameTools.BuildMechine
         [NonSerialized]
         public List<BuildAction> Actions = new List<BuildAction>();
 
+        public List<BuildTimer> ActionTimers = new List<BuildTimer>();
+
         public int CurrentActionIndex;
 
         public bool AnyError;
@@ -24,6 +26,8 @@ namespace UniGameTools.BuildMechine
             get { return EditorPrefs.GetBool("BuildMechine.IsBuilding", false); }
             set { EditorPrefs.SetBool("BuildMechine.IsBuilding", value); }
         }
+
+        public BuildTimer MechineTimer = new BuildTimer();
 
         public static BuildMechine JsonInstance
         {
@@ -62,8 +66,10 @@ namespace UniGameTools.BuildMechine
                     //                var json = JsonConvert.SerializeObject(value, Formatting.Indented, setting);
                     //                EditorPrefs.SetString("BuildMechine.JsonInstance", json);
 
-                    var json = JsonUtility.ToJson(value);
+                    var json = JsonUtility.ToJson(value, true);
                     EditorPrefs.SetString("BuildMechine.JsonInstance", json);
+
+                    Debug.Log(json);
 
                     var warpers = value.Actions.Select(r => new Warper().SetAction(r)).ToList();
                     var collection = new WarperCollection() { Warpers = warpers };
@@ -125,10 +131,14 @@ namespace UniGameTools.BuildMechine
                         {
                             Infos.AddRange(CurrentBuildAction.Infos);
 
+                            OnActionEnd(CurrentActionIndex);
+
                             CurrentActionIndex++;
 
                             if (CurrentBuildAction != null)
                             {
+                                OnActionEnter(CurrentActionIndex);
+
                                 Debug.Log("Start Next Step : " + CurrentBuildAction.GetType());
                                 JsonInstance = this;
                             }
@@ -140,6 +150,7 @@ namespace UniGameTools.BuildMechine
                         break;
                     case BuildState.Failure:
                         {
+                            OnActionEnd(CurrentActionIndex);
                             Infos.AddRange(CurrentBuildAction.Infos);
                             Debug.LogError("打包结束。打包失败了");
                             BuildFinished(true);
@@ -151,8 +162,19 @@ namespace UniGameTools.BuildMechine
             }
         }
 
+        private void OnActionEnter(int index)
+        {
+            ActionTimers[index].StartTime = DateTime.Now.Ticks;
+        }
+
+        private void OnActionEnd(int index)
+        {
+            ActionTimers[index].EndTime = DateTime.Now.Ticks;
+        }
+
         private void BuildFinished(bool anyError)
         {
+            this.MechineTimer.EndTime = DateTime.Now.Ticks;
             AnyError = anyError;
 
 
@@ -193,6 +215,19 @@ namespace UniGameTools.BuildMechine
 
             IsBuilding = true;
 
+            for (int i = 0; i < actions.Length; i++)
+            {
+                Instance.ActionTimers.Add(new BuildTimer());
+            }
+
+            Instance.OnActionEnter(0);
+
+            Instance.MechineTimer = new BuildTimer()
+            {
+                StartTime = DateTime.Now.Ticks
+            };
+
+
             //        for (var i = 0; i < actions.Length; i++)
             //        {
             //            var a = actions[i];
@@ -220,6 +255,18 @@ namespace UniGameTools.BuildMechine
                     EditorUtility.DisplayProgressBar(progress.Title, progress.Content, progress.Porgress);
                 }
             }
+        }
+    }
+
+    [Serializable]
+    public class BuildTimer
+    {
+        public long StartTime;
+        public long EndTime;
+
+        public TimeSpan Duration
+        {
+            get { return BuildHelper.CalDuration(DateTime.Now.Ticks, StartTime, EndTime); }
         }
     }
 }
