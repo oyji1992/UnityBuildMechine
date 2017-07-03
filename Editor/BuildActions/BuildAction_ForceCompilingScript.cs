@@ -22,6 +22,7 @@ namespace UniGameTools.BuildMechine.BuildActions
                     break;
                 }
             }
+
             if (cMonoScript != null)
             {
                 AssetDatabase.ImportAsset(AssetDatabase.GetAssetPath(cMonoScript));

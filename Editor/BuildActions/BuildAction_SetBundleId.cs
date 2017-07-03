@@ -2,16 +2,16 @@
 
 namespace UniGameTools.BuildMechine.BuildActions
 {
-    public class BuildAction_BundleID : BuildAction
+    public class BuildAction_SetBundleId : BuildAction
     {
         public string BundleID;
 
-        public BuildAction_BundleID()
+        public BuildAction_SetBundleId()
         {
 
         }
 
-        public BuildAction_BundleID(string id)
+        public BuildAction_SetBundleId(string id)
         {
             this.BundleID = id;
         }

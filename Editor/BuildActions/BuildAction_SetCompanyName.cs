@@ -2,16 +2,16 @@
 
 namespace UniGameTools.BuildMechine.BuildActions
 {
-    public class BuildAction_CompanyName : BuildAction
+    public class BuildAction_SetCompanyName : BuildAction
     {
         public string CompanyName;
 
-        public BuildAction_CompanyName()
+        public BuildAction_SetCompanyName()
         {
 
         }
 
-        public BuildAction_CompanyName(string companyName)
+        public BuildAction_SetCompanyName(string companyName)
         {
             this.CompanyName = companyName;
         }

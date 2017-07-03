@@ -228,7 +228,7 @@ namespace UniGameTools.BuildMechine
         }
 
         /// <summary>
-        /// 准备好之后。调用Update就开始进入建造管道了
+        /// 进入建造管道
         /// </summary>
         public static void SetPipeline(params BuildAction[] actions)
         {

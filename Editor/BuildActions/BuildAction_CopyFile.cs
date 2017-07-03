@@ -16,18 +16,17 @@ namespace UniGameTools.BuildMechine.BuildActions
 
         public override BuildState OnUpdate()
         {
-            var dir = Application.dataPath.Replace("/Assets", "");
-            var src = Path.Combine(dir, SrcPath);
-            var des = Path.Combine(dir, TargetPath);
-
-            CopyFolder(src, des);
+            CopyFolder(SrcPath, TargetPath);
             return BuildState.Success;
         }
 
 
         private void CopyFolder(string src, string des)
         {
-            Directory.CreateDirectory(des);
+            if (Directory.Exists(des) == false)
+            {
+                Directory.CreateDirectory(des);
+            }
 
             if (Directory.Exists(src))
             {

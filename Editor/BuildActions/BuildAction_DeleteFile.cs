@@ -5,25 +5,25 @@ namespace UniGameTools.BuildMechine.BuildActions
 {
     public class BuildAction_DeleteFile : BuildAction
     {
-        public string FilePath;
+        public string Path;
 
-        public BuildAction_DeleteFile(string filePath)
+        public BuildAction_DeleteFile(string path)
         {
-            FilePath = filePath;
+            Path = path;
         }
 
         public override BuildState OnUpdate()
         {
-            var dir = Application.dataPath.Replace("/Assets", "");
-            var path = Path.Combine(dir, FilePath);
-
-            if (Directory.Exists(path))
+            if (Directory.Exists(Path))
             {
-                Directory.Delete(path, true);
+                Directory.Delete(Path, true);
             }
             else
             {
-                File.Delete(Path.Combine(dir, FilePath));
+                if (File.Exists(Path))
+                {
+                    File.Delete(Path);
+                }
             }
 
             return BuildState.Success;
