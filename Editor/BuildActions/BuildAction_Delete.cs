@@ -1,13 +1,17 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using UnityEngine;
 
 namespace UniGameTools.BuildMechine.BuildActions
 {
-    public class BuildAction_DeleteFile : BuildAction
+    /// <summary>
+    /// Delete Dir/Files
+    /// </summary>
+    public class BuildAction_Delete : BuildAction
     {
         public string Path;
 
-        public BuildAction_DeleteFile(string path)
+        public BuildAction_Delete(string path)
         {
             Path = path;
         }

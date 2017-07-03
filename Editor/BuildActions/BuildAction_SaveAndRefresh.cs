@@ -2,7 +2,7 @@ using UnityEditor;
 
 namespace UniGameTools.BuildMechine.BuildActions
 {
-    public class BuildAction_SaveAndFresh : BuildAction
+    public class BuildAction_SaveAndRefresh : BuildAction
     {
         public override BuildState OnUpdate()
         {

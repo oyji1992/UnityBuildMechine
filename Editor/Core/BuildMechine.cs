@@ -136,7 +136,16 @@ namespace UniGameTools.BuildMechine
 
             if (CurrentBuildAction != null)
             {
-                var buildState = CurrentBuildAction.OnUpdate();
+                BuildState buildState;
+                try
+                {
+                    buildState = CurrentBuildAction.OnUpdate();
+                }
+                catch (Exception e)
+                {
+                    Debug.LogException(e);
+                    buildState = BuildState.Failure;
+                }
                 switch (buildState)
                 {
                     case BuildState.None:
@@ -205,8 +214,6 @@ namespace UniGameTools.BuildMechine
 
             Debug.LogWarning("<color=yellow>BuildMechine</color> : Build Finished !!!");
 
-            Debug.Log(BatchMode);
-
             if (BatchMode)
             {
                 Debug.Log("Exit");
@@ -221,46 +228,43 @@ namespace UniGameTools.BuildMechine
             get { return CurrentBuildAction == null; }
         }
 
-        public static void SetPipeline_BatchMode(params BuildAction[] actions)
+        public static BuildMechine NewPipeline()
         {
-            BatchMode = true;
-            PipelineInternal(actions);
-        }
-
-        /// <summary>
-        /// 进入建造管道
-        /// </summary>
-        public static void SetPipeline(params BuildAction[] actions)
-        {
-            BatchMode = false;
-            PipelineInternal(actions);
-        }
-
-        private static void PipelineInternal(BuildAction[] actions)
-        {
-            var window = EditorWindow.GetWindow<BuildMechineWindows>();
-
-            window.Focus();
-
             Instance = new BuildMechine();
+            Instance.Actions = new List<BuildAction>();
+            return Instance;
+        }
 
-            Instance.Actions = actions.ToList();
-
-            Instance.CurrentActionIndex = 0;
-
-            IsBuilding = true;
+        public BuildMechine AddActions(params BuildAction[] actions)
+        {
+            this.Actions.AddRange(actions);
 
             for (int i = 0; i < actions.Length; i++)
             {
                 Instance.ActionTimers.Add(new BuildTimer());
             }
 
-            Instance.OnActionEnter(0);
+            return this;
+        }
+
+        public void Run(bool batchMood = false)
+        {
+            BatchMode = batchMood;
 
             Instance.MechineTimer = new BuildTimer()
             {
                 StartTime = DateTime.Now.Ticks
             };
+
+            IsBuilding = true;
+
+            Instance.CurrentActionIndex = 0;
+            Instance.OnActionEnter(0);
+
+            var window = EditorWindow.GetWindow<BuildMechineWindows>();
+
+            window.Focus();
+
         }
 
         /// <summary>
