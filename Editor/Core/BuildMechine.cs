@@ -17,7 +17,7 @@ namespace UniGameTools.BuildMechine
 
         public int CurrentActionIndex;
 
-        public bool ErrorStop;
+        public bool AnyError;
 
         public static bool IsBuilding
         {
@@ -134,18 +134,15 @@ namespace UniGameTools.BuildMechine
                             }
                             else
                             {
-                                BuildFinished();
+                                BuildFinished(false);
                             }
-
-
                         }
                         break;
                     case BuildState.Failure:
                         {
                             Infos.AddRange(CurrentBuildAction.Infos);
                             Debug.LogError("打包结束。打包失败了");
-                            ErrorStop = true;
-                            BuildFinished();
+                            BuildFinished(true);
                         }
                         break;
                     default:
@@ -154,13 +151,18 @@ namespace UniGameTools.BuildMechine
             }
         }
 
-        private void BuildFinished()
+        private void BuildFinished(bool anyError)
         {
+            AnyError = anyError;
+
+
             // Log All Errors;
             foreach (var error in Infos)
             {
-                Debug.LogError(error);
+                Debug.LogError(string.Format("{0} - {1}", error.Key, error.Value));
             }
+
+            IsBuilding = false;
 
             JsonInstance = null;
 
@@ -188,6 +190,8 @@ namespace UniGameTools.BuildMechine
             Instance.Actions = actions.ToList();
 
             Instance.CurrentActionIndex = 0;
+
+            IsBuilding = true;
 
             //        for (var i = 0; i < actions.Length; i++)
             //        {

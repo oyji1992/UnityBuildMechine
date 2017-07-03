@@ -38,7 +38,7 @@ namespace UniGameTools.BuildMechine
 
                     if (index == BuildMechine.Instance.CurrentActionIndex)
                     {
-                        if (BuildMechine.Instance.ErrorStop == false)
+                        if (BuildMechine.Instance.AnyError == false)
                         {
                             state = "<color=yellow>运行中</color>";
                         }
@@ -88,7 +88,10 @@ namespace UniGameTools.BuildMechine
         {
             if (BuildMechine.Instance != null)
             {
-                BuildMechine.Instance.UpdateMethod();
+                if (BuildMechine.IsBuilding)
+                {
+                    BuildMechine.Instance.UpdateMethod();
+                }
             }
             else
             {
@@ -100,6 +103,7 @@ namespace UniGameTools.BuildMechine
                     BuildMechine.JsonInstance = null;
                 }
             }
+
             Repaint();
         }
     }

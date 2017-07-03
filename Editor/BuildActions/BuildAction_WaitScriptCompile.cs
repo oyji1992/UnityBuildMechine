@@ -31,7 +31,7 @@ namespace UniGameTools.BuildMechine.BuildActions
 
         private void UpdateFunction()
         {
-            if (CurrentProgress == 0 && StartTime + 10 < EditorApplication.timeSinceStartup)
+            if (CurrentProgress == 0 && StartTime + 3 < EditorApplication.timeSinceStartup)
             {
                 Debug.Log("跳过了等待编译");
                 EditorApplication.update -= UpdateFunction;
