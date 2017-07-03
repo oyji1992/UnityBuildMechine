@@ -53,6 +53,13 @@ public class BuildAction_CustomAction : BuildAction
 }
 ```
 
+# BatchModeExample
+```
+// cmd
+"F:\Program Files\Unity5.6.0f3\Editor\Unity.exe" -projectpath "F:\BuildMechine" -executeMethod BuildMechineExample.Build -batchmode
+```
+
+C#代码中使用`BuildMechine.SetPipeline_BatchMode`代替`BuildMechine.SetPipeline`
 
 # 注意事项
 - 内部使用 UnityEngine.JsonUtility。如果自定义BuildAction里边使用Properties和JsonUtility不兼容的List或者Dictionary或者Array。会导致Action的数据丢失。

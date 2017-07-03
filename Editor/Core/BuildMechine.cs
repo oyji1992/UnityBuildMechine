@@ -55,7 +55,15 @@ namespace UniGameTools.BuildMechine
         /// </summary>
         public BuildTimer MechineTimer = new BuildTimer();
 
-        public static bool BatchMode;
+        public static bool BatchMode
+        {
+            get { return EditorPrefs.GetBool("BuildMechine.BatchMode", false); }
+            set
+            {
+                Debug.LogError("Set Batch Mode : " + value);
+                EditorPrefs.SetBool("BuildMechine.BatchMode", value);
+            }
+        }
 
         public static BuildMechine JsonInstance
         {
@@ -196,6 +204,16 @@ namespace UniGameTools.BuildMechine
             EditorUtility.ClearProgressBar();
 
             Debug.LogWarning("<color=yellow>BuildMechine</color> : Build Finished !!!");
+
+            Debug.Log(BatchMode);
+
+            if (BatchMode)
+            {
+                Debug.Log("Exit");
+
+                EditorApplication.Exit(anyError ? 1 : 0);
+            }
+
         }
 
         public bool IsFinished
@@ -206,13 +224,19 @@ namespace UniGameTools.BuildMechine
         public static void SetPipeline_BatchMode(params BuildAction[] actions)
         {
             BatchMode = true;
-            SetPipeline(actions);
+            PipelineInternal(actions);
         }
 
         /// <summary>
         /// 准备好之后。调用Update就开始进入建造管道了
         /// </summary>
         public static void SetPipeline(params BuildAction[] actions)
+        {
+            BatchMode = false;
+            PipelineInternal(actions);
+        }
+
+        private static void PipelineInternal(BuildAction[] actions)
         {
             var window = EditorWindow.GetWindow<BuildMechineWindows>();
 
@@ -237,21 +261,6 @@ namespace UniGameTools.BuildMechine
             {
                 StartTime = DateTime.Now.Ticks
             };
-
-
-            //        for (var i = 0; i < actions.Length; i++)
-            //        {
-            //            var a = actions[i];
-            //
-            //            a.Mechine = Instance;
-            //
-            //            if (i + 1 < actions.Length)
-            //            {
-            //                a.NextAction = actions[i + 1];
-            //            }
-            //        }
-            //
-            //        Instance.CurrentBuildAction = actions[0];
         }
 
         /// <summary>

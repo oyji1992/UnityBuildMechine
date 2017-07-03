@@ -10,7 +10,7 @@ public class BuildMechineExample
     [MenuItem("Tools/BuildMechine/Example")]
     public static void Build()
     {
-        BuildMechine.SetPipeline_BatchMode(
+        BuildMechine.SetPipeline(
             new BuildAction_Print("Start Build Mechine"),
             new BuildAction_ForceCompilingScript(),
             // new BuildAction_WaitScriptCompile(),
