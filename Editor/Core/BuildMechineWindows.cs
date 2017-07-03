@@ -16,12 +16,34 @@ namespace UniGameTools.BuildMechine
             public TimeSpan Duration;
         }
 
-        private List<BuildInfo> BuildInfos = new List<BuildInfo>();
+        private GUIStyle _fontStyle;
+        private GUIStyle _titleStyle;
 
-        private BuildContext RuntimeContext = new BuildContext();
+        private List<BuildInfo> _buildInfos = new List<BuildInfo>();
+
+        private BuildContext _runtimeContext = new BuildContext();
 
         private Vector2 _scrollPosition;
         private TimeSpan _totalDuration;
+
+        void OnEnable()
+        {
+            _fontStyle = new GUIStyle()
+            {
+                richText = true,
+                fontSize = 11,
+                normal = new GUIStyleState() { textColor = Color.grey }
+            };
+
+            _titleStyle = new GUIStyle()
+            {
+                richText = true,
+                fontSize = 16,
+                fontStyle = FontStyle.Bold,
+                border = new RectOffset(0, 0, 5, 5),
+                normal = new GUIStyleState() { textColor = Color.white * 0.7f }
+            };
+        }
 
         void OnGUI()
         {
@@ -33,9 +55,9 @@ namespace UniGameTools.BuildMechine
         {
             if (BuildMechine.Instance != null)
             {
-                BuildInfos.Clear();
+                _buildInfos.Clear();
 
-                RuntimeContext = BuildMechine.Instance.Context;
+                _runtimeContext = BuildMechine.Instance.Context;
 
                 for (var index = 0; index < BuildMechine.Instance.Actions.Count; index++)
                 {
@@ -59,7 +81,7 @@ namespace UniGameTools.BuildMechine
                         state = "<color=green>已完成</color>";
                     }
 
-                    BuildInfos.Add(new BuildInfo()
+                    _buildInfos.Add(new BuildInfo()
                     {
                         Index = index,
                         ActionName = instanceAction.GetType().Name,
@@ -76,30 +98,25 @@ namespace UniGameTools.BuildMechine
 
         private void Draw()
         {
-            var style = new GUIStyle()
-            {
-                richText = true,
-                fontSize = 11,
-                normal = new GUIStyleState() { textColor = Color.grey }
-            };
-
             EditorGUILayout.Space();
 
             EditorGUILayout.LabelField(string.Format("Total Time : {0}:{1:d2}.{2:d3}",
                 _totalDuration.Minutes,
                 _totalDuration.Seconds,
-                _totalDuration.Milliseconds));
+                _totalDuration.Milliseconds), _titleStyle);
+
+            EditorGUILayout.Space();
 
             _scrollPosition = EditorGUILayout.BeginScrollView(_scrollPosition);
             {
                 //-----------------------------RuntimeContext-----------------------------//
-                EditorGUILayout.LabelField("RuntimeContext");
+                EditorGUILayout.LabelField("RuntimeContext", _titleStyle);
 
-                if (RuntimeContext.Contexts.Count > 0)
+                EditorGUILayout.BeginVertical("box");
                 {
-                    EditorGUILayout.BeginVertical("box");
+                    if (_runtimeContext.Contexts.Count > 0)
                     {
-                        foreach (var info in RuntimeContext.Contexts)
+                        foreach (var info in _runtimeContext.Contexts)
                         {
                             EditorGUILayout.BeginHorizontal();
                             {
@@ -108,29 +125,37 @@ namespace UniGameTools.BuildMechine
                             EditorGUILayout.EndHorizontal();
                         }
                     }
-                    EditorGUILayout.EndVertical();
+                    else
+                    {
+                        EditorGUILayout.LabelField("");
+                    }
                 }
+                EditorGUILayout.EndVertical();
 
                 EditorGUILayout.Space();
 
-                EditorGUILayout.LabelField("BuildInfos");
+
+
                 //-----------------------------BuildInfos-----------------------------//
-                foreach (var info in BuildInfos)
+                EditorGUILayout.LabelField("BuildInfos", _titleStyle);
+
+                foreach (var info in _buildInfos)
                 {
                     EditorGUILayout.BeginHorizontal("box");
                     {
-                        EditorGUILayout.LabelField((info.Index + 1).ToString("d2") + ".", style, GUILayout.Width(30));
-                        EditorGUILayout.LabelField(string.Format("[{0}", info.ActionName), style, GUILayout.Width(300));
-                        EditorGUILayout.LabelField(string.Format("] : "), style, GUILayout.Width(20));
-                        EditorGUILayout.LabelField(string.Format("[{0}]", info.State), style, GUILayout.Width(50));
+                        EditorGUILayout.LabelField((info.Index + 1).ToString("d2") + ".", _fontStyle, GUILayout.Width(30));
+                        EditorGUILayout.LabelField(string.Format("[{0}", info.ActionName), _fontStyle, GUILayout.Width(300));
+                        EditorGUILayout.LabelField(string.Format("] : "), _fontStyle, GUILayout.Width(20));
+                        EditorGUILayout.LabelField(string.Format("[{0}]", info.State), _fontStyle, GUILayout.Width(50));
 
-                        EditorGUILayout.LabelField(string.Format("{0:d2}.{1:d3}",
+                        EditorGUILayout.LabelField(string.Format("{0:d3}.{1:d3}",
                                 (int)info.Duration.TotalSeconds,
                                 info.Duration.Milliseconds),
                             GUILayout.Width(80));
                     }
                     EditorGUILayout.EndHorizontal();
                 }
+
 
             }
             EditorGUILayout.EndScrollView();

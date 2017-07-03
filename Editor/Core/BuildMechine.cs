@@ -140,7 +140,7 @@ namespace UniGameTools.BuildMechine
                             {
                                 OnActionEnter(CurrentActionIndex);
 
-                                Debug.Log("<color=yellow>BuildMechine</color> : Move To Next : <color=orange>" + CurrentBuildAction.GetType().Name + "</color>");
+                                Debug.Log("<color=yellow>BuildMechine</color> -> <color=orange>" + CurrentBuildAction.GetType().Name + "</color>");
                                 JsonInstance = this;
                             }
                             else
