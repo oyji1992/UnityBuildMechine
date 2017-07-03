@@ -3,6 +3,9 @@ using UnityEngine;
 
 namespace UniGameTools.BuildMechine.BuildActions
 {
+    /// <summary>
+    /// 等待编译完毕
+    /// </summary>
     public class BuildAction_WaitScriptCompile : BuildAction
     {
         private int CurrentProgress = 0;
@@ -33,7 +36,7 @@ namespace UniGameTools.BuildMechine.BuildActions
         {
             if (CurrentProgress == 0 && StartTime + 3 < EditorApplication.timeSinceStartup)
             {
-                Debug.Log("跳过了等待编译");
+                Debug.Log("跳过等待编译");
                 EditorApplication.update -= UpdateFunction;
                 this._currentState = BuildState.Success;
 

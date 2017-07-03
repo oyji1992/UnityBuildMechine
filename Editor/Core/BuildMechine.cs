@@ -55,6 +55,8 @@ namespace UniGameTools.BuildMechine
         /// </summary>
         public BuildTimer MechineTimer = new BuildTimer();
 
+        public static bool BatchMode;
+
         public static BuildMechine JsonInstance
         {
             get
@@ -122,6 +124,8 @@ namespace UniGameTools.BuildMechine
         /// </summary>
         public void UpdateMethod()
         {
+            if (EditorApplication.isCompiling) return;
+
             if (CurrentBuildAction != null)
             {
                 var buildState = CurrentBuildAction.OnUpdate();
@@ -182,9 +186,8 @@ namespace UniGameTools.BuildMechine
             this.MechineTimer.EndTime = DateTime.Now.Ticks;
             AnyError = anyError;
 
-
             // Log All Errors;
-            Debug.Log(Context);
+            Debug.Log("Context : \n" + Context);
 
             IsBuilding = false;
 
@@ -193,12 +196,17 @@ namespace UniGameTools.BuildMechine
             EditorUtility.ClearProgressBar();
 
             Debug.LogWarning("<color=yellow>BuildMechine</color> : Build Finished !!!");
-
         }
 
         public bool IsFinished
         {
             get { return CurrentBuildAction == null; }
+        }
+
+        public static void SetPipeline_BatchMode(params BuildAction[] actions)
+        {
+            BatchMode = true;
+            SetPipeline(actions);
         }
 
         /// <summary>
