@@ -11,9 +11,11 @@ namespace UniGameTools.BuildMechine.BuildActions
         public bool X64;
         public string ExeName;
         public string BuildPath;
+        public string ProjectName;
 
-        public BuildAction_BuildProjectWindowsStandalone(string exeName, string buildPath, bool x64)
+        public BuildAction_BuildProjectWindowsStandalone(string projectName, string exeName, string buildPath, bool x64)
         {
+            ProjectName = projectName;
             X64 = x64;
             ExeName = exeName;
             BuildPath = buildPath;
@@ -32,7 +34,7 @@ namespace UniGameTools.BuildMechine.BuildActions
 
             var x = X64 ? "x64" : "x86";
 
-            var dirName = string.Format("{0}_{3}_build{1}_{2:yyyyMMddHHmm}", PlayerSettings.productName, BuildHelper.GetBuildNum(), DateTime.Now, x);
+            var dirName = string.Format("{0}_{3}_build{1}_{2:yyyyMMddHHmm}", this.ProjectName, BuildHelper.GetBuildNum(), DateTime.Now, x);
 
             BuildHelper.AddBuildNum();
 

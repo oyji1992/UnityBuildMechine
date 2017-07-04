@@ -11,9 +11,11 @@ namespace UniGameTools.BuildMechine.BuildActions
         public string KeyAliasPass;
         public string KeyStorePass;
         public string BuildPath;
+        public string ProjectName;
 
-        public BuildAction_BuildProjectAndroid(string buildPath, string keyAliasPass = "", string keyStorePass = "")
+        public BuildAction_BuildProjectAndroid(string projectName, string buildPath, string keyAliasPass = "", string keyStorePass = "")
         {
+            ProjectName = projectName;
             KeyAliasPass = keyAliasPass;
             KeyStorePass = keyStorePass;
             BuildPath = buildPath;
@@ -28,7 +30,7 @@ namespace UniGameTools.BuildMechine.BuildActions
 
             // projectName_yyyyMMddHHmm
             var apkName = string.Format("{0}_build{1}_{2:yyyyMMddHHmm}.apk",
-                PlayerSettings.productName,
+                ProjectName,
                 BuildHelper.GetBuildNum(),
                 DateTime.Now);
 

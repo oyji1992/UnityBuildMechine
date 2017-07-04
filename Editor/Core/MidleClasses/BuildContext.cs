@@ -45,6 +45,17 @@ namespace UniGameTools.BuildMechine
             return defaultValue;
         }
 
+        public bool Contains(string key)
+        {
+            var find = Contexts.Find(r => r.Key == key);
+            if (find != null)
+            {
+                return true;
+            }
+            return false;
+        }
+
+
         public override string ToString()
         {
             var sb = new StringBuilder();

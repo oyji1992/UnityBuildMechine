@@ -6,17 +6,7 @@ namespace UniGameTools.BuildMechine.BuildActions
     public class BuildAction_SetScriptingDefineSymbols : BuildAction
     {
         public string[] Symbols;
-        public BuildTargetGroup BuildTargetGroup = BuildTargetGroup.Standalone;
-
-        public BuildAction_SetScriptingDefineSymbols(params string[] symbols)
-        {
-            this.Symbols = symbols;
-        }
-
-        public BuildAction_SetScriptingDefineSymbols()
-        {
-
-        }
+        public BuildTargetGroup BuildTargetGroup;
 
         public BuildAction_SetScriptingDefineSymbols(BuildTargetGroup buildTargetGroup, params string[] symbols)
         {
