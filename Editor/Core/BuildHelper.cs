@@ -89,5 +89,23 @@ namespace UniGameTools.BuildMechine
             }
             return TimeSpan.FromTicks(endTime - startTime);
         }
+
+        public static List<string> GetAllScenesInBuild()
+        {
+            Debug.LogWarning("Build Scenes : ");
+            Debug.LogWarning("============================");
+            var listScene = new List<string>();
+            for (var i = 0; i < EditorBuildSettings.scenes.Length; i++)
+            {
+                var s = EditorBuildSettings.scenes[i];
+                if (s.enabled)
+                {
+                    listScene.Add(s.path);
+                    Debug.Log(s.path);
+                }
+            }
+            Debug.LogWarning("============================");
+            return listScene;
+        }
     }
 }

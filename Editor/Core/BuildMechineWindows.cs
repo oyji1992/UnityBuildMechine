@@ -63,22 +63,22 @@ namespace UniGameTools.BuildMechine
                 {
                     var instanceAction = BuildMechine.Instance.Actions[index];
 
-                    var state = "<color=grey>未运行</color>";
+                    var state = "<color=grey>wait</color>";
 
                     if (index == BuildMechine.Instance.CurrentActionIndex)
                     {
                         if (BuildMechine.Instance.AnyError == false)
                         {
-                            state = "<color=yellow>运行中</color>";
+                            state = "<color=yellow>running</color>";
                         }
                         else
                         {
-                            state = "<color=red>失败！</color>";
+                            state = "<color=red>fail</color>";
                         }
                     }
                     else if (index < BuildMechine.Instance.CurrentActionIndex)
                     {
-                        state = "<color=green>已完成</color>";
+                        state = "<color=green>done</color>";
                     }
 
                     _buildInfos.Add(new BuildInfo()
@@ -145,7 +145,7 @@ namespace UniGameTools.BuildMechine
                     {
                         EditorGUILayout.LabelField((info.Index + 1).ToString("d2") + ".", _fontStyle, GUILayout.Width(30));
                         EditorGUILayout.LabelField(string.Format("[{0}", info.ActionName), _fontStyle, GUILayout.Width(300));
-                        EditorGUILayout.LabelField(string.Format("] : "), _fontStyle, GUILayout.Width(20));
+                        EditorGUILayout.LabelField(string.Format("] : "), _fontStyle, GUILayout.Width(25));
                         EditorGUILayout.LabelField(string.Format("[{0}]", info.State), _fontStyle, GUILayout.Width(50));
 
                         EditorGUILayout.LabelField(string.Format("{0:d3}.{1:d3}",

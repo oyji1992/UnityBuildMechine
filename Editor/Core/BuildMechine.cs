@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using UniGameTools.BuildMechine.BuildActions;
 using UnityEditor;
 using UnityEngine;
 
@@ -250,6 +251,9 @@ namespace UniGameTools.BuildMechine
         public void Run(bool batchMood = false)
         {
             BatchMode = batchMood;
+
+            this.Actions.Add(new BuildAction_End());
+            Instance.ActionTimers.Add(new BuildTimer());
 
             Instance.MechineTimer = new BuildTimer()
             {

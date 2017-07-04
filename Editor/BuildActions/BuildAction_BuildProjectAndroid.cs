@@ -24,19 +24,7 @@ namespace UniGameTools.BuildMechine.BuildActions
             PlayerSettings.keyaliasPass = KeyAliasPass;
             PlayerSettings.keystorePass = KeyStorePass;
 
-            Debug.LogWarning("Build Scenes : ");
-            Debug.LogWarning("============================");
-            var listScene = new List<string>();
-            for (var i = 0; i < EditorBuildSettings.scenes.Length; i++)
-            {
-                var s = EditorBuildSettings.scenes[i];
-                if (s.enabled)
-                {
-                    listScene.Add(s.path);
-                    Debug.Log(s.path);
-                }
-            }
-            Debug.LogWarning("============================");
+            var listScene = BuildHelper.GetAllScenesInBuild();
 
             // projectName_yyyyMMddHHmm
             var apkName = string.Format("{0}_build{1}_{2:yyyyMMddHHmm}.apk",
