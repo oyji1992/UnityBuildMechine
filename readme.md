@@ -1,23 +1,6 @@
-**开发尚未完成**
+![example](docs/example.png)
 
-**In Progress**
-
-# 项目介绍
-通过BuildMechine实现Unity自动化打包流程
-
-
-# 使用方式
-```
-BuildMechine.SetPipeline(
-    new BuildAction_Print("Start Build Mechine"),
-    new BuildAction_Print("Building"),
-    new BuildAction_ForceCompilingScript(),
-    new BuildAction_WaitScriptCompile(),
-    new BuildAction_Print("Build Finished")
-);
-```
-
-# 自定方式
+# Custom Actions
 ```
 public class BuildAction_CustomAction : BuildAction
 {
@@ -56,10 +39,10 @@ public class BuildAction_CustomAction : BuildAction
 # BatchModeExample
 ```
 // cmd
-"F:\Program Files\Unity5.6.0f3\Editor\Unity.exe" -projectpath "F:\BuildMechine" -executeMethod BuildMechineExample.Build -batchmode
+"x:\x\Unity.exe" -projectpath "x:\Project" -executeMethod BuildMechineExample.Build -batchmode
 ```
 
-C#代码中使用`BuildMechine.SetPipeline_BatchMode`代替`BuildMechine.SetPipeline`
+C#代码中使用`BuildMechine.Run(true)`而不是`BuildMechine.Rune(false)`
 
 # 注意事项
 - 内部使用 UnityEngine.JsonUtility。如果自定义BuildAction里边使用Properties和JsonUtility不兼容的List或者Dictionary或者Array。会导致Action的数据丢失。
