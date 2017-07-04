@@ -177,7 +177,6 @@ namespace UniGameTools.BuildMechine
                 if (jsonInstance != null)
                 {
                     BuildMechine.Instance = jsonInstance;
-                    BuildMechine.JsonInstance = null;
                 }
             }
 
