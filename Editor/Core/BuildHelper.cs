@@ -10,7 +10,6 @@ namespace UniGameTools.BuildMechine
 {
     public static class BuildHelper
     {
-
         public static string GetProjectDir()
         {
             return Application.dataPath.Remove(Application.dataPath.Length - 6, 6);
@@ -46,8 +45,8 @@ namespace UniGameTools.BuildMechine
         /// </summary>
         public static void AddBuildNum()
         {
-            var buildFilePath = Path.Combine(Directory.GetCurrentDirectory(), "Assets");
-            var buildRecordFile = Path.Combine(buildFilePath, "BuildNumber.txt");
+            var buildRecordFile = Path.Combine("ProjectSettings", "BuildNumber.txt");
+
             var buildNumber = 0;
             if (!File.Exists(buildRecordFile))
             {
@@ -68,8 +67,7 @@ namespace UniGameTools.BuildMechine
         /// <returns></returns>
         public static int GetBuildNum()
         {
-            var buildFilePath = Path.Combine(Directory.GetCurrentDirectory(), "Assets");
-            var buildRecordFile = Path.Combine(buildFilePath, "BuildNumber.txt");
+            var buildRecordFile = Path.Combine("ProjectSettings", "BuildNumber.txt");
             var buildNumber = 0;
             if (!File.Exists(buildRecordFile))
             {

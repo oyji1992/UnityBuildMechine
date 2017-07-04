@@ -28,6 +28,10 @@ namespace UniGameTools.BuildMechine.BuildActions
                 {
                     File.Delete(Path);
                 }
+                else
+                {
+                    Context.Set(string.Format("Delete {0}", Path), "Fail");
+                }
             }
 
             return BuildState.Success;

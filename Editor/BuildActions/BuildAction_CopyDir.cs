@@ -29,7 +29,11 @@ namespace UniGameTools.BuildMechine.BuildActions
 
         private void CopyFolder(string src, string des)
         {
-            if (Directory.Exists(src) == false) return;
+            if (Directory.Exists(src) == false)
+            {
+                Context.Set("Error", "Directory not found : " + src);
+                throw new Exception("Directory not found : " + src);
+            }
 
             if (Directory.Exists(des) == false)
             {

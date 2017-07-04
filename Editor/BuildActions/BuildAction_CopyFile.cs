@@ -19,6 +19,7 @@ namespace UniGameTools.BuildMechine.BuildActions
         {
             if (!File.Exists(Source))
             {
+                Context.Set("Error", "File not found : " + Source);
                 return BuildState.Failure;
             }
 

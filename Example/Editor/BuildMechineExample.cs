@@ -12,16 +12,16 @@ public class BuildMechineExample
     {
         BuildMechine.NewPipeline()
             .AddActions(Actions)
-            .AddActions(Actions)
-            .AddActions(Actions)
-            .AddActions(Actions)
-            .AddActions(Actions)
-            .AddActions(Actions)
-            .AddActions(Actions)
-            .AddActions(Actions)
-            .AddActions(Actions)
-            .AddActions(Actions)
-            .AddActions(Actions)
+            //            .AddActions(Actions)
+            //            .AddActions(Actions)
+            //            .AddActions(Actions)
+            //            .AddActions(Actions)
+            //            .AddActions(Actions)
+            //            .AddActions(Actions)
+            //            .AddActions(Actions)
+            //            .AddActions(Actions)
+            //            .AddActions(Actions)
+            //            .AddActions(Actions)
             .Run();
     }
 
@@ -42,6 +42,9 @@ public class BuildMechineExample
         new BuildAction_Delete("Assets/321.txt"),
         new BuildAction_Delete("Assets/SDK2"),
         new BuildAction_SaveAndRefresh(),
+        new BuildAction_SetBundleId("cn.test.test"), 
+        new BuildAction_BuildProjectAndroid("Build/"), 
+        new BuildAction_Print("Build Succeed"), 
     };
 
     private class BuildAction_Error : BuildAction
