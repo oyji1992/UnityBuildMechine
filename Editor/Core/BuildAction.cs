@@ -7,10 +7,19 @@ namespace UniGameTools.BuildMechine
     /// </summary>
     public abstract class BuildAction
     {
+        public BuildMechine Mechine { get; set; }
+
         /// <summary>
         /// 上下文
         /// </summary>
-        public BuildContext Context = new BuildContext();
+        public BuildContext Context
+        {
+            get
+            {
+                if (Mechine == null) return null;
+                return Mechine.Context;
+            }
+        }
 
         /// <summary>
         /// 更新方法

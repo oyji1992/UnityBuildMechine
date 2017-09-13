@@ -12,9 +12,13 @@ namespace UniGameTools.BuildMechine.BuildActions
         public string KeyStorePass;
         public string BuildPath;
         public string ProjectName;
+        public string KeyAliasName;
+        public string KeyStorePath;
 
-        public BuildAction_BuildProjectAndroid(string projectName, string buildPath, string keyAliasPass = "", string keyStorePass = "")
+        public BuildAction_BuildProjectAndroid(string projectName, string buildPath, string keyStorePath = "", string keyAliasName = "", string keyAliasPass = "", string keyStorePass = "")
         {
+            this.KeyStorePath = keyStorePath;
+            this.KeyAliasName = keyAliasName;
             ProjectName = projectName;
             KeyAliasPass = keyAliasPass;
             KeyStorePass = keyStorePass;
@@ -23,8 +27,8 @@ namespace UniGameTools.BuildMechine.BuildActions
 
         public override BuildState OnUpdate()
         {
-            PlayerSettings.keyaliasPass = KeyAliasPass;
-            PlayerSettings.keystorePass = KeyStorePass;
+            PlayerSettings.Android.keyaliasPass = KeyAliasPass;
+            PlayerSettings.Android.keystorePass = KeyStorePass;
 
             var listScene = BuildHelper.GetAllScenesInBuild();
 

@@ -83,6 +83,11 @@ namespace UniGameTools.BuildMechine
                 var collection = JsonUtility.FromJson<WarperCollection>(actionJson);
                 mechine.Actions = collection.Warpers.Select(r => r.GetAction()).ToList();
 
+                foreach (var action in mechine.Actions)
+                {
+                    action.Mechine = mechine;
+                }
+
                 return mechine;
             }
             set
@@ -97,14 +102,17 @@ namespace UniGameTools.BuildMechine
                     var mechineJson = JsonUtility.ToJson(value, true);
                     EditorPrefs.SetString("BuildMechine.JsonInstance", mechineJson);
 
+                    Debug.Log(mechineJson);
+
+
                     var warpers = value.Actions.Select(r => new ActionWarper().SetAction(r)).ToList();
                     var collection = new WarperCollection() { Warpers = warpers };
 
-                    var warpersJson = JsonUtility.ToJson(collection);
+                    var warpersJson = JsonUtility.ToJson(collection, true);
 
                     EditorPrefs.SetString("BuildMechine.Actions", warpersJson);
 
-                    // Debug.Log(json);
+                    Debug.Log(warpersJson);
 
                 }
             }
@@ -155,6 +163,9 @@ namespace UniGameTools.BuildMechine
                     case BuildState.Success:
                         {
                             OnActionEnd(CurrentActionIndex);
+
+                            AssetDatabase.Refresh();
+                            AssetDatabase.SaveAssets();
 
                             CurrentActionIndex++;
 
@@ -253,6 +264,12 @@ namespace UniGameTools.BuildMechine
             BatchMode = batchMood;
 
             this.Actions.Add(new BuildAction_End());
+
+            foreach (var action in this.Actions)
+            {
+                action.Mechine = this;
+            }
+
             Instance.ActionTimers.Add(new BuildTimer());
 
             Instance.MechineTimer = new BuildTimer()
