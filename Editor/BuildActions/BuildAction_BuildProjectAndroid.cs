@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using UnityEditor;
 using UnityEngine;
@@ -27,6 +26,8 @@ namespace UniGameTools.BuildMechine.BuildActions
 
         public override BuildState OnUpdate()
         {
+            PlayerSettings.Android.keystoreName = KeyStorePath;
+            PlayerSettings.Android.keyaliasName = KeyAliasName;
             PlayerSettings.Android.keyaliasPass = KeyAliasPass;
             PlayerSettings.Android.keystorePass = KeyStorePass;
 
@@ -37,8 +38,6 @@ namespace UniGameTools.BuildMechine.BuildActions
                 ProjectName,
                 BuildHelper.GetBuildNum(),
                 DateTime.Now);
-
-            BuildHelper.AddBuildNum();
 
             var path = Path.Combine(BuildPath, apkName);
 

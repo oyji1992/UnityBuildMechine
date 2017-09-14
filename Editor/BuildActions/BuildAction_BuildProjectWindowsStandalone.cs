@@ -36,8 +36,6 @@ namespace UniGameTools.BuildMechine.BuildActions
 
             var dirName = string.Format("{0}_{3}_build{1}_{2:yyyyMMddHHmm}", this.ProjectName, BuildHelper.GetBuildNum(), DateTime.Now, x);
 
-            BuildHelper.AddBuildNum();
-
             var path = Path.Combine(BuildPath, dirName);
 
             path = Path.Combine(path, fileName);

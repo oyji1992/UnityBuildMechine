@@ -14,7 +14,7 @@ namespace UniGameTools.BuildMechine.BuildActions
 
         public BuildAction_SetAppIcon(string path, BuildTargetGroup group)
         {
-            Group = @group;
+            Group = group;
             this.Path = path;
         }
 

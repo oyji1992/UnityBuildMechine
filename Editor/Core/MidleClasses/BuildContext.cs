@@ -9,14 +9,14 @@ namespace UniGameTools.BuildMechine
     {
         public List<KV> Contexts = new List<KV>();
 
-        public void Merge(BuildContext other)
-        {
-            foreach (var info in other.Contexts)
-            {
-                Remove(info.Key);
-                Contexts.Add(info);
-            }
-        }
+        //        public void Merge(BuildContext other)
+        //        {
+        //            foreach (var info in other.Contexts)
+        //            {
+        //                Remove(info.Key);
+        //                Contexts.Add(info);
+        //            }
+        //        }
 
         public void Set(string key, string value)
         {

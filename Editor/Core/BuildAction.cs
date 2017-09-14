@@ -1,10 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace UniGameTools.BuildMechine
 {
     /// <summary>
     /// 编译会导致非公开变量的值丢失
     /// </summary>
+    [Serializable]
     public abstract class BuildAction
     {
         public BuildMechine Mechine { get; set; }
@@ -25,7 +27,12 @@ namespace UniGameTools.BuildMechine
         /// 更新方法
         /// 每Tick调用
         /// </summary>
-        public abstract BuildState OnUpdate();
+        public virtual BuildState OnUpdate() { return BuildState.Success; }
+
+        /// <summary>
+        /// 退出
+        /// </summary>
+        public virtual void OnExit() { }
 
         /// <summary>
         /// 获得当前进度

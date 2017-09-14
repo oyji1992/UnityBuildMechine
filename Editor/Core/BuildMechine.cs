@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text;
 using UniGameTools.BuildMechine.BuildActions;
 using UnityEditor;
 using UnityEngine;
@@ -9,6 +11,11 @@ namespace UniGameTools.BuildMechine
 {
     public class BuildMechine
     {
+        static BuildMechine()
+        {
+            Application.logMessageReceived += OnLog;
+        }
+
         /// <summary>
         /// Instance
         /// </summary>
@@ -19,6 +26,11 @@ namespace UniGameTools.BuildMechine
         /// 用于Action之间数据传递
         /// </summary>
         public BuildContext Context = new BuildContext();
+
+        /// <summary>
+        /// 运行失败的Action
+        /// </summary>
+        public BuildAction FailureAction;
 
         /// <summary>
         /// Actions
@@ -102,8 +114,7 @@ namespace UniGameTools.BuildMechine
                     var mechineJson = JsonUtility.ToJson(value, true);
                     EditorPrefs.SetString("BuildMechine.JsonInstance", mechineJson);
 
-                    Debug.Log(mechineJson);
-
+                    //                    Debug.Log(mechineJson);
 
                     var warpers = value.Actions.Select(r => new ActionWarper().SetAction(r)).ToList();
                     var collection = new WarperCollection() { Warpers = warpers };
@@ -112,7 +123,7 @@ namespace UniGameTools.BuildMechine
 
                     EditorPrefs.SetString("BuildMechine.Actions", warpersJson);
 
-                    Debug.Log(warpersJson);
+                    //                    Debug.Log(warpersJson);
 
                 }
             }
@@ -125,16 +136,11 @@ namespace UniGameTools.BuildMechine
         {
             get
             {
-                return Actions.Count > CurrentActionIndex ? Actions[CurrentActionIndex] : null;
+                if (Actions.Count > CurrentActionIndex) return Actions[CurrentActionIndex];
+
+                else return null;
             }
         }
-        //    public void Update()
-        //    {
-        //        EditorApplication.delayCall += () =>
-        //        {
-        //            UpdateMethod();
-        //        };
-        //    }
 
         /// <summary>
         /// 更新方法
@@ -154,7 +160,21 @@ namespace UniGameTools.BuildMechine
                 {
                     Debug.LogException(e);
                     buildState = BuildState.Failure;
+
+                    var tryGet = Context.TryGet("Error");
+
+                    if (string.IsNullOrEmpty(tryGet))
+                    {
+                        tryGet = e.ToString();
+                    }
+                    else
+                    {
+                        tryGet += "\n" + e.ToString();
+                    }
+
+                    Context.Set("Error", tryGet);
                 }
+
                 switch (buildState)
                 {
                     case BuildState.None:
@@ -167,13 +187,15 @@ namespace UniGameTools.BuildMechine
                             AssetDatabase.Refresh();
                             AssetDatabase.SaveAssets();
 
+                            CurrentBuildAction.OnExit();
+
                             CurrentActionIndex++;
 
                             if (CurrentBuildAction != null)
                             {
                                 OnActionEnter(CurrentActionIndex);
 
-                                Debug.Log("<color=yellow>BuildMechine</color> -> <color=orange>" + CurrentBuildAction.GetType().Name + "</color>");
+                                Debug.Log("BuildMechine - " + CurrentBuildAction.GetType().Name);
                                 JsonInstance = this;
                             }
                             else
@@ -184,9 +206,18 @@ namespace UniGameTools.BuildMechine
                         break;
                     case BuildState.Failure:
                         {
-                            Debug.LogError("<color=yellow>BuildMechine</color> : Build Fail!!!");
+                            Debug.LogError("BuildMechine - Build Fail!!!");
 
                             OnActionEnd(CurrentActionIndex);
+
+                            if (this.FailureAction != null)
+                            {
+                                this.FailureAction.Mechine = this;
+                                Debug.Log("BuildMechine - ErrorAction - " + this.FailureAction.GetType().Name);
+
+                                var onUpdate = this.FailureAction.OnUpdate();
+                            }
+
                             BuildFinished(true);
                         }
                         break;
@@ -199,15 +230,11 @@ namespace UniGameTools.BuildMechine
         private void OnActionEnter(int index)
         {
             ActionTimers[index].StartTime = DateTime.Now.Ticks;
-
-            CurrentBuildAction.Context.Merge(this.Context);
         }
 
         private void OnActionEnd(int index)
         {
             ActionTimers[index].EndTime = DateTime.Now.Ticks;
-
-            this.Context.Merge(CurrentBuildAction.Context);
         }
 
         private void BuildFinished(bool anyError)
@@ -230,12 +257,12 @@ namespace UniGameTools.BuildMechine
             {
                 Debug.Log("Exit");
 
-                EditorApplication.Exit(anyError ? 1 : 0);
+                EditorApplication.Exit(anyError ? -1 : 0);
             }
 
         }
 
-        public bool IsFinished
+        private bool IsFinished
         {
             get { return CurrentBuildAction == null; }
         }
@@ -259,8 +286,21 @@ namespace UniGameTools.BuildMechine
             return this;
         }
 
+        public BuildMechine SetOnFailure(BuildAction action)
+        {
+            this.FailureAction = action;
+
+            return this;
+        }
+
         public void Run(bool batchMood = false)
         {
+            LogFile.Clean();
+
+            BuildHelper.AddBuildNum();
+
+            this.Context.Set("buildnum", BuildHelper.GetBuildNum().ToString());
+
             BatchMode = batchMood;
 
             this.Actions.Add(new BuildAction_End());
@@ -288,6 +328,12 @@ namespace UniGameTools.BuildMechine
 
         }
 
+        private static void OnLog(string condition, string stacktrace, LogType type)
+        {
+            var msg = string.Format("[{0}]:{1}\n{2}\n", type, condition, stacktrace);
+            LogFile.Append(msg);
+        }
+
         /// <summary>
         /// 获得当前进度
         /// </summary>
@@ -312,5 +358,80 @@ namespace UniGameTools.BuildMechine
                 }
             }
         }
+
     }
+
+    public static class LogFile
+    {
+        public static void Append(string msg)
+        {
+            File.AppendAllText("Temp/BuildMechineLog.txt", msg);
+        }
+
+        public static string ReadAll()
+        {
+            return File.ReadAllText("Temp/BuildMechineLog.txt");
+        }
+
+        public static void Clean()
+        {
+            File.WriteAllText("Temp/BuildMechineLog.txt", "");
+        }
+    }
+
+    public static class StringParse
+    {
+        public static void Parse(this BuildMechine mechine, ref string parse)
+        {
+            parse = Replace(parse, "projectname", Application.productName);
+
+            if (mechine.Context != null)
+            {
+                foreach (var kv in mechine.Context.Contexts)
+                {
+                    parse = Replace(parse, kv.Key.ToLower(), kv.Value);
+                }
+            }
+
+
+            parse = Replace(parse, "mechinestate", mechine.BuildState());
+            parse = Replace(parse, "log", LogFile.ReadAll());
+        }
+
+        public static string BuildState(this BuildMechine mechine)
+        {
+            var sb = new StringBuilder();
+
+            for (var index = 0; index < mechine.Actions.Count; index++)
+            {
+                var mechineAction = mechine.Actions[index];
+
+                var state = "Waiting";
+
+                if (index < mechine.CurrentActionIndex)
+                {
+                    state = "Finished";
+                }
+
+                if (index == mechine.CurrentActionIndex)
+                {
+                    state = "Running";
+                }
+
+
+                sb.AppendLine(string.Format("{0} - {1} - {2}", index + 1, mechineAction.GetType().Name, state));
+
+            }
+
+            return sb.ToString();
+        }
+
+        public static string Replace(string origin, string key, string result)
+        {
+            if (origin == null) return "";
+
+            return origin.Replace("${" + key.ToLower() + "}", result);
+        }
+    }
+
 }
