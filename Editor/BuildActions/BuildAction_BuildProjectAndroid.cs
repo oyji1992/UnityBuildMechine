@@ -31,6 +31,8 @@ namespace UniGameTools.BuildMechine.BuildActions
             PlayerSettings.Android.keyaliasPass = KeyAliasPass;
             PlayerSettings.Android.keystorePass = KeyStorePass;
 
+            PlayerSettings.Android.bundleVersionCode = BuildHelper.GetBuildNum();
+
             var listScene = BuildHelper.GetAllScenesInBuild();
 
             // projectName_yyyyMMddHHmm

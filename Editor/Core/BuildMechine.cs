@@ -73,7 +73,6 @@ namespace UniGameTools.BuildMechine
             get { return EditorPrefs.GetBool("BuildMechine.BatchMode", false); }
             set
             {
-                Debug.LogError("Set Batch Mode : " + value);
                 EditorPrefs.SetBool("BuildMechine.BatchMode", value);
             }
         }
