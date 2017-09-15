@@ -184,6 +184,9 @@ namespace UniGameTools.BuildMechine
                         {
                             OnActionEnd(CurrentActionIndex);
 
+                            Debug.Log("BuildMechine - End - " + CurrentBuildAction.GetType().Name);
+                            Debug.Log(JsonUtility.ToJson(CurrentBuildAction));
+
                             AssetDatabase.Refresh();
                             AssetDatabase.SaveAssets();
 
@@ -195,7 +198,8 @@ namespace UniGameTools.BuildMechine
                             {
                                 OnActionEnter(CurrentActionIndex);
 
-                                Debug.Log("BuildMechine - " + CurrentBuildAction.GetType().Name);
+                                Debug.Log("BuildMechine - Run - " + CurrentBuildAction.GetType().Name);
+                                Debug.Log(JsonUtility.ToJson(CurrentBuildAction));
                                 JsonInstance = this;
                             }
                             else
@@ -206,7 +210,8 @@ namespace UniGameTools.BuildMechine
                         break;
                     case BuildState.Failure:
                         {
-                            Debug.LogError("BuildMechine - Build Fail!!!");
+                            Debug.LogWarning("BuildMechine - Build Fail!!!");
+                            Debug.Log(JsonUtility.ToJson(CurrentBuildAction));
 
                             OnActionEnd(CurrentActionIndex);
 
@@ -214,6 +219,7 @@ namespace UniGameTools.BuildMechine
                             {
                                 this.FailureAction.Mechine = this;
                                 Debug.Log("BuildMechine - ErrorAction - " + this.FailureAction.GetType().Name);
+                                Debug.Log(JsonUtility.ToJson(CurrentBuildAction));
 
                                 var onUpdate = this.FailureAction.OnUpdate();
                             }
@@ -305,6 +311,9 @@ namespace UniGameTools.BuildMechine
 
             this.Actions.Add(new BuildAction_End());
 
+            this.Actions = Actions.Select(r => r.DeepCopy()).ToList();
+            this.FailureAction = this.FailureAction.DeepCopy();
+
             foreach (var action in this.Actions)
             {
                 action.Mechine = this;
@@ -330,7 +339,36 @@ namespace UniGameTools.BuildMechine
 
         private static void OnLog(string condition, string stacktrace, LogType type)
         {
-            var msg = string.Format("[{0}]:{1}\n{2}\n", type, condition, stacktrace);
+            var msg = "";
+
+            if (condition.EndsWith("\n") == false)
+            {
+                condition += "\n";
+            }
+
+            if (stacktrace.EndsWith("\n") == false)
+            {
+                stacktrace += "\n";
+            }
+
+            switch (type)
+            {
+                case LogType.Error:
+                case LogType.Assert:
+                case LogType.Exception:
+                    msg = string.Format("\n#######{0}#######\n" +
+                                        "{1}" +
+                                        "{2}" +
+                                        "======={0}=======\n\n", type, condition, stacktrace);
+                    break;
+                case LogType.Warning:
+                case LogType.Log:
+                    msg = string.Format("{1}\n", type, condition);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException("type", type, null);
+            }
+
             LogFile.Append(msg);
         }
 

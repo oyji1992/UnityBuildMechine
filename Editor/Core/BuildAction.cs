@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.Remoting.Messaging;
+using Newtonsoft.Json;
+using UnityEngine;
 
 namespace UniGameTools.BuildMechine
 {
@@ -44,6 +47,15 @@ namespace UniGameTools.BuildMechine
         public virtual BuildProgress GetProgress()
         {
             return null;
+        }
+
+        public BuildAction DeepCopy()
+        {
+            var json = JsonUtility.ToJson(this);
+
+            var newAction = JsonUtility.FromJson(json, this.GetType());
+
+            return newAction as BuildAction;
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using UnityEditor;
 using UniGameTools.BuildMechine;
 using UniGameTools.BuildMechine.BuildActions;
@@ -15,7 +16,8 @@ public class BuildMechineExample
             //            .AddActions(new BuildAction_SetScriptingDefineSymbols(BuildTargetGroup.Standalone, "FancyDream", "Wait"))
             //            .AddActions(new BuildAction_SetScriptingDefineSymbols(BuildTargetGroup.Standalone, "FancyDream", "Wait2"))
             //            .AddActions(new BuildAction_SetScriptingDefineSymbols(BuildTargetGroup.Standalone, "FancyDream", "Wait3"))
-            .AddActions(new BuildAction_Exception())
+            .AddActions(new BuildAction_CommandLine(@"Assets\BuildMechine\Example\Bat\mkdir.bat", Directory.GetCurrentDirectory()))
+            .AddActions(new BuildAction_CommandLine(@"Assets\BuildMechine\Example\Bat\error.bat", Directory.GetCurrentDirectory()))
             .AddActions(EmailSettingExample.EmailBuildSuccess)
             //            .AddActions(new BuildAction_SetScriptingDefineSymbols(BuildTargetGroup.Standalone, "Wait"))
             //            .AddActions(new BuildAction_Print("Start Build Mechine"))
