@@ -1,6 +1,3 @@
-using UnityEditor;
-using UnityEngine;
-
 namespace UniGameTools.BuildMechine.BuildActions
 {
     //    /// <summary>
