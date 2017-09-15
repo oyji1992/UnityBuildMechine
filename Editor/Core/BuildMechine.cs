@@ -311,7 +311,11 @@ namespace UniGameTools.BuildMechine
             this.Actions.Add(new BuildAction_End());
 
             this.Actions = Actions.Select(r => r.DeepCopy()).ToList();
-            this.FailureAction = this.FailureAction.DeepCopy();
+
+            if (this.FailureAction != null)
+            {
+                this.FailureAction = this.FailureAction.DeepCopy();
+            }
 
             foreach (var action in this.Actions)
             {
