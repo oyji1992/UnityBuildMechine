@@ -11,30 +11,27 @@ public class BuildMechineExample
     {
         BuildMechine.NewPipeline()
             .SetOnFailure(EmailSettingExample.EmailBuildFail)
+
             .AddActions(EmailSettingExample.EmailBuildStart)
-                        //            .AddActions(new BuildAction_SetScriptingDefineSymbols(BuildTargetGroup.Standalone, "FancyDream", "Wait"))
-                        //            .AddActions(new BuildAction_SetScriptingDefineSymbols(BuildTargetGroup.Standalone, "FancyDream", "Wait2"))
-                        //            .AddActions(new BuildAction_SetScriptingDefineSymbols(BuildTargetGroup.Standalone, "FancyDream", "Wait3"))
-                        //            .AddActions(new BuildAction_CommandLine(@"Assets\BuildMechine\Example\Bat\mkdir.bat", Directory.GetCurrentDirectory()))
-                        //            .AddActions(new BuildAction_CommandLine(@"Assets\BuildMechine\Example\Bat\error.bat", Directory.GetCurrentDirectory()))
-                        //            .AddActions(new BuildAction_BuildProjectAndroid("normal", "Build/", "argun.keystore", "argun", "123456", "123456"))
+            // Build Windows
+            .AddActions(new BuildAction_BuildProjectWindowsStandalone("Normal", "game.exe", "Build/Windows/", x64: true))
+            // Build Android
+            .AddActions(new BuildAction_BuildProjectAndroid("Normal", "Build/", Path.Combine(Directory.GetCurrentDirectory(), "xxxx.keystore"), "xxxxx", "123456", "123456"))
+            // Build IOS
             .AddActions(new BuildAction_BuildProjectIOS("normal", "build"))
+            // Send Email
             .AddActions(EmailSettingExample.EmailBuildSuccess)
-            //            .AddActions(new BuildAction_SetScriptingDefineSymbols(BuildTargetGroup.Standalone, "Wait"))
-            //            .AddActions(new BuildAction_Print("Start Build Mechine"))
-            //            .AddActions(new BuildAction_SetScriptingDefineSymbols(BuildTargetGroup.Standalone, "Wait2"))
-            //            .AddActions(new BuildAction_Print("Start Build Mechine"))
-            //            .AddActions(new BuildAction_SetScriptingDefineSymbols(BuildTargetGroup.Standalone, "Wait3"))
-            //            .AddActions(new BuildAction_Print("Start Build Mechine"))
-            //            .AddActions(new BuildAction_IncreaseBuildNum())
-            //            .AddActions(new BuildAction_SaveAndRefresh(),
-            //                        new BuildAction_SetBundleId("cn.test.test")
-            //new BuildAction_BuildProjectAndroid("Build/"),
-            //new BuildAction_BuildProjectWindowsStandalone("game", "Build/Windows/", x64: false),
-            //new BuildAction_BuildProjectWindowsStandalone("game", "Build/Windows/", x64: true)
-            //                        )
+            // Terminal执行shell
+            .AddActions(new BuildAction_CommandLine("/Applications/Utilities/Terminal.app/Contents/MacOS/Terminal", Path.Combine(Directory.GetCurrentDirectory(), "../Build"), "BuildAdHoc.sh"))
+            // 命令行执行shell
+            .AddActions(new BuildAction_CommandLine("/bin/sh", Path.Combine(Directory.GetCurrentDirectory(), "../Build"), "BuildAdHoc.sh"))
+            // Bat
+            .AddActions(new BuildAction_CommandLine(@"Assets\BuildMechine\Example\Bat\mkdir.bat", Directory.GetCurrentDirectory()))
+
             .Run();
     }
+
+
     private class BuildAction_Error : BuildAction
     {
         public override BuildState OnUpdate()

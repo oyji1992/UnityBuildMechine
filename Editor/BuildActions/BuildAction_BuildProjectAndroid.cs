@@ -14,6 +14,15 @@ namespace UniGameTools.BuildMechine.BuildActions
         public string KeyAliasName;
         public string KeyStorePath;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="projectName"></param>
+        /// <param name="buildPath"></param>
+        /// <param name="keyStorePath">一定需要为绝对路径</param>
+        /// <param name="keyAliasName"></param>
+        /// <param name="keyAliasPass"></param>
+        /// <param name="keyStorePass"></param>
         public BuildAction_BuildProjectAndroid(string projectName, string buildPath, string keyStorePath = "", string keyAliasName = "", string keyAliasPass = "", string keyStorePass = "")
         {
             this.KeyStorePath = keyStorePath;
