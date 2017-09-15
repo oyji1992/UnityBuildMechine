@@ -37,7 +37,11 @@ namespace UniGameTools.BuildMechine.BuildActions
 
             if (string.IsNullOrEmpty(res) == false)
             {
-                throw new Exception("Build Fail : " + res);
+                // 在Unity5.4.2以后的版本，修改plist会出错
+                if (res.Contains("End tag cannot appear in this state.") == false)
+                {
+                    throw new Exception("Build Fail : " + res);
+                }
             }
 
             Debug.LogFormat("打包至 {0} 结果 {1}", path, res);
